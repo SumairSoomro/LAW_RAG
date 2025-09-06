@@ -25,20 +25,29 @@ export class PDFExtractor {
 
   async extractTextFromPDF(pdfPath: string): Promise<Array<{ pageNumber: number; text: string; sectionHeading: string }>> {
     const dataBuffer = fs.readFileSync(pdfPath);
-    const data = await pdf.default(dataBuffer);
+    
+    const data = await pdf.default(dataBuffer) as any;
+    const actualPageCount = data.numpages || 1;
+    
+    // Always use actual page count for accurate distribution
+    const fullText = data.text;
+    const charsPerPage = Math.ceil(fullText.length / actualPageCount);
     
     const pages: Array<{ pageNumber: number; text: string; sectionHeading: string }> = [];
     
-    // Split by page breaks if available, otherwise create single page
-    const pageTexts = data.text.split('\f').filter(text => text.trim().length > 0);
-    
-    pageTexts.forEach((pageText, index) => {
-      pages.push({
-        pageNumber: index + 1,
-        text: pageText.trim(),
-        sectionHeading: this.extractSectionHeading(pageText)
-      });
-    });
+    for (let i = 0; i < actualPageCount; i++) {
+      const start = i * charsPerPage;
+      const end = Math.min((i + 1) * charsPerPage, fullText.length);
+      const pageText = fullText.substring(start, end);
+      
+      if (pageText.trim().length > 0) {
+        pages.push({
+          pageNumber: i + 1,
+          text: pageText.trim(),
+          sectionHeading: this.extractSectionHeading(pageText)
+        });
+      }
+    }
 
     return pages;
   }
@@ -90,6 +99,7 @@ export class PDFExtractor {
   async processPDF(pdfPath: string, documentName: string): Promise<DocumentChunk[]> {
     const pages = await this.extractTextFromPDF(pdfPath);
     const allChunks: DocumentChunk[] = [];
+    const maxPageNumber = Math.max(...pages.map(p => p.pageNumber));
     
     for (const page of pages) {
       const metadata = {
@@ -99,6 +109,10 @@ export class PDFExtractor {
       };
       
       const chunks = this.chunkText(page.text, metadata);
+      // Ensure no chunk exceeds the actual page count
+      chunks.forEach(chunk => {
+        chunk.metadata.pageNumber = Math.min(chunk.metadata.pageNumber, maxPageNumber);
+      });
       allChunks.push(...chunks);
     }
     

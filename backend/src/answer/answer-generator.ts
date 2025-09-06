@@ -16,7 +16,6 @@ export interface AnswerResponse {
   answer: string;
   sources: Array<{
     documentName: string;
-    pageNumber: number;
   }>;
   reasoning?: string;
   foundInDocument: boolean;
@@ -47,16 +46,35 @@ export class AnswerGeneratorService {
       const contextChunks = this.formatChunksForPrompt(searchResults);
       const systemPrompt = this.buildSystemPrompt();
       const userPrompt = this.buildUserPrompt(query, contextChunks);
-
+      
+      // Original GPT-4o-mini configuration (commented out for GPT-5-nano testing)
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-4',
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+         ],
+         temperature: 0.1,
+         max_completion_tokens: 1000
+       });
+      
+      
+
+      // GPT-5-nano configuration (no temperature parameter supported)
+
+
+      /*
+      const response = await this.openai.chat.completions.create({
+        model: 'gpt-5-nano',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
-        temperature: 0.1,
-        max_tokens: 1000
+        max_completion_tokens: 1000
       });
+      */
+      
+    
 
       const answerText = response.choices[0]?.message?.content || "Not in the document.";
       
@@ -71,7 +89,7 @@ export class AnswerGeneratorService {
     return searchResults
       .map((result, index) => {
         const chunk = result.metadata;
-        return `[Source ${index + 1}: ${chunk.documentName}, Page ${chunk.pageNumber}${chunk.sectionHeading ? `, Section: ${chunk.sectionHeading}` : ''}]\n${chunk.text}\n`;
+        return `[Source ${index + 1}: ${chunk.documentName}${chunk.sectionHeading ? `, Section: ${chunk.sectionHeading}` : ''}]\n${chunk.text}\n`;
       })
       .join('\n');
   }
@@ -82,15 +100,16 @@ export class AnswerGeneratorService {
 CRITICAL RULES:
 1. Use ONLY the context provided below. Never use external knowledge.
 2. If the answer is not in the context, respond exactly: "Not in the document."
-3. For every factual statement, cite the source as (DocumentName, Page X).
+3. For every factual statement, cite the source using the EXACT document filename shown in the context (e.g., if you see "Source 1: filename.pdf", cite as "(filename.pdf)").
 4. Provide a clear explanation of your reasoning process.
 5. Be precise with legal terminology and citations.
 6. If information is partially in the document but incomplete, say what you can find and note what's missing.
-7. NEVER refer to "chunks" or "sources" by number in your response (e.g., don't say "Chunk 1" or "Source 1").
+7. NEVER refer to "chunks" or "sources" by number in your response (e.g., don't say "Chunk 1", "Source 1", "Document 1", or any numbered references).
 
 RESPONSE FORMAT:
 - Give a direct answer to the question
-- Cite sources for each claim using only: (DocumentName, Page X)
+- Cite sources for each claim using the EXACT document filename from the context: (filename.pdf)
+- Use the complete filename as it appears after the colon in the source headers
 - Explain your reasoning based on the document content, not source numbers
 - If uncertain or information is missing, be explicit about limitations
 - Focus on the legal content, not the internal organization of the context`;
@@ -126,22 +145,20 @@ Please answer the question using only the provided context. Remember to cite sou
     return response;
   }
 
-  private extractSources(answerText: string, searchResults: SearchResult[]): Array<{ documentName: string; pageNumber: number }> {
-    const sources: Array<{ documentName: string; pageNumber: number }> = [];
+  private extractSources(answerText: string, searchResults: SearchResult[]): Array<{ documentName: string }> {
+    const sources: Array<{ documentName: string }> = [];
     const seenSources = new Set<string>();
+  
 
     searchResults.forEach(result => {
       const docName = result.metadata.documentName;
-      const pageNum = result.metadata.pageNumber;
-      const sourceKey = `${docName}:${pageNum}`;
+      const sourceKey = `${docName}`;
       
-      if (answerText.includes(`Page ${pageNum}`) || 
-          answerText.includes(`page ${pageNum}`) || 
-          answerText.includes(docName)) {
+      // Only look for document name
+      if (answerText.includes(docName) || answerText.includes(docName.replace('.pdf', ''))) {
         if (!seenSources.has(sourceKey)) {
           sources.push({
-            documentName: docName,
-            pageNumber: pageNum
+            documentName: docName
           });
           seenSources.add(sourceKey);
         }
