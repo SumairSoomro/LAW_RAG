@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__pinecone-mcp__search-docs",
+      "Bash(node:*)",
+      "Bash(npm run build:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
