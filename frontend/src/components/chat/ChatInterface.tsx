@@ -124,7 +124,7 @@ export const ChatInterface: React.FC = () => {
         const uploadMessage: Message = {
           id: Date.now().toString(),
           type: 'ai',
-          content: `Great! I've successfully uploaded "${file.name}" (${response.chunks_processed} sections processed, ${response.total_tokens} tokens). You can now ask me questions about this document and I'll provide answers with specific citations.`,
+          content: `Great! I've successfully uploaded "${file.name}". You can now ask me questions about this document and I'll provide answers with specific citations.`,
           timestamp: new Date()
         };
         setMessages(prev => [...prev, uploadMessage]);
@@ -162,6 +162,12 @@ export const ChatInterface: React.FC = () => {
     });
   };
 
+  const formatMessageContent = (content: string) => {
+    // Convert **text** to <strong>text</strong>
+    const boldFormatted = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    return boldFormatted;
+  };
+
   return (
     <div className="chat-container flex flex-col h-[calc(100vh-73px)]">
       {/* Messages Area */}
@@ -185,32 +191,39 @@ export const ChatInterface: React.FC = () => {
                   ? 'bg-[#252323] text-[#f5f1ed]' 
                   : message.error
                     ? 'bg-red-50 border border-red-200 text-red-800'
-                    : 'bg-white border border-[#dad2bc] text-[#252323]'
+                    : message.foundInDocument === false
+                      ? 'bg-[#fff8f8] border border-[#fecaca] text-[#991b1b]'
+                      : 'bg-white border border-[#dad2bc] text-[#252323]'
               } p-4 rounded-lg shadow-sm max-w-lg sm:max-w-2xl`}>
-                <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
+                <p 
+                  className="whitespace-pre-wrap leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: formatMessageContent(message.content) }}
+                />
                 
-                {message.sources && message.sources.length > 0 && (
-                  <div className="mt-3 p-3 bg-[#f5f1ed] text-[#70798c] rounded border-l-4 border-[#70798c] text-sm">
-                    <div className="flex items-center gap-2 mb-2">
+                {message.sources && message.sources.length > 0 ? (
+                  <div className="source-info flex items-center gap-2 text-[#70798c] text-sm p-3 bg-[#f5f1ed] rounded border-l-4 border-[#70798c] mt-3">
+                    {message.sources.length === 1 ? (
                       <FileText className="w-4 h-4" />
-                      <span>
-                        <strong>Source{message.sources.length > 1 ? 's' : ''}:</strong>
-                      </span>
-                    </div>
-                    {message.sources.map((source, index) => (
-                      <div key={index} className="mb-1 last:mb-0">
-                        📄 {source.document}
-                        {source.page && `, Page ${source.page}`}
-                        {source.section && `, ${source.section}`}
-                      </div>
-                    ))}
-                    {message.searchResults !== undefined && (
-                      <div className="mt-2 text-xs opacity-75">
-                        {message.searchResults} relevant section{message.searchResults !== 1 ? 's' : ''} found
+                    ) : (
+                      <div className="flex">
+                        <FileText className="w-4 h-4" />
+                        <FileText className="w-4 h-4 -ml-2" />
                       </div>
                     )}
+                    <span>
+                      <strong>Source{message.sources.length > 1 ? 's' : ''}:</strong> {message.sources.map(source => source.documentName).join(', ')}
+                    </span>
                   </div>
-                )}
+                ) : message.foundInDocument === false ? (
+                  <div className="source-info flex items-center gap-2 text-[#991b1b] text-sm p-3 bg-[#fef2f2] rounded border-l-4 border-[#ef4444] mt-3">
+                    <div className="w-4 h-4 flex items-center justify-center">
+                      <span className="text-xs">🔍</span>
+                    </div>
+                    <span>
+                      <strong>Searched:</strong> All uploaded documents
+                    </span>
+                  </div>
+                ) : null}
                 
                 <div className={`text-xs mt-2 opacity-60 ${
                   message.type === 'user' ? 'text-right' : 'text-left'

@@ -1,11 +1,16 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import { SignupForm } from '../components/auth/SignupForm';
 import { useAuth } from '../hooks/useAuth';
 
 export const SignupPage: React.FC = () => {
   const navigate = useNavigate();
-  const { signUp, signInWithGoogle, loading } = useAuth();
+  const { user, signUp, signInWithGoogle, loading } = useAuth();
+
+  // Redirect authenticated users to dashboard
+  if (user && !loading) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const handleSignup = async (
     username: string, 

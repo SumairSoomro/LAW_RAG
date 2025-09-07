@@ -26,10 +26,7 @@ export interface QueryResponse {
 }
 
 export interface SourceReference {
-  document: string;
-  page?: number;
-  section?: string;
-  text?: string;
+  documentName: string;
 }
 
 export interface DocumentListResponse {
