@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal RAG Answer Format - Design Canvas</title>
+    <link rel="stylesheet" href="theme_legal_answer.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <style>
+        body {
+            font-family: Inter, sans-serif !important;
+            background: linear-gradient(135deg, #f5f1ed 0%, #f5f1ed 100%) !important;
+            min-height: 100vh !important;
+            padding: 2rem !important;
+        }
+        
+        .design-canvas {
+            max-width: 800px !important;
+            margin: 0 auto !important;
+            background: white !important;
+            border-radius: 16px !important;
+            box-shadow: var(--shadow-xl) !important;
+            overflow: hidden !important;
+        }
+        
+        .canvas-header {
+            background: #252323 !important;
+            color: #f5f1ed !important;
+            padding: 1rem 1.5rem !important;
+            font-weight: 600 !important;
+        }
+        
+        .answer-container {
+            padding: 2rem !important;
+            background: #f5f1ed !important;
+        }
+        
+        .message-bubble {
+            display: flex !important;
+            align-items: flex-start !important;
+            gap: 0.75rem !important;
+            margin-bottom: 1.5rem !important;
+        }
+        
+        .bot-avatar {
+            width: 40px !important;
+            height: 40px !important;
+            background: white !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            border: 2px solid #dad2bc !important;
+            box-shadow: var(--shadow-sm) !important;
+            flex-shrink: 0 !important;
+        }
+        
+        .answer-content {
+            background: white !important;
+            border: 1px solid #dad2bc !important;
+            border-radius: 12px !important;
+            padding: 1.5rem !important;
+            box-shadow: var(--shadow-sm) !important;
+            flex: 1 !important;
+            max-width: 600px !important;
+        }
+        
+        .answer-text {
+            color: #252323 !important;
+            line-height: 1.6 !important;
+            font-size: 0.95rem !important;
+            margin-bottom: 1rem !important;
+        }
+        
+        .source-info {
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.5rem !important;
+            color: #70798c !important;
+            font-size: 0.875rem !important;
+            padding: 0.75rem !important;
+            background: #f5f1ed !important;
+            border-radius: 8px !important;
+            border-left: 4px solid #70798c !important;
+            margin-bottom: 0.75rem !important;
+        }
+        
+        .timestamp {
+            color: #70798c !important;
+            font-size: 0.75rem !important;
+            text-align: right !important;
+            opacity: 0.8 !important;
+        }
+        
+        /* "Not in Document" variant styles */
+        .not-found-content {
+            background: #fff8f8 !important;
+            border: 1px solid #fecaca !important;
+        }
+        
+        .not-found-text {
+            color: #991b1b !important;
+        }
+        
+        .not-found-source {
+            background: #fef2f2 !important;
+            border-left-color: #ef4444 !important;
+            color: #991b1b !important;
+        }
+        
+        .divider {
+            height: 1px !important;
+            background: #dad2bc !important;
+            margin: 2rem 0 !important;
+        }
+        
+        .variant-label {
+            color: #70798c !important;
+            font-size: 0.875rem !important;
+            font-weight: 600 !important;
+            margin-bottom: 1rem !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="design-canvas">
+        <div class="canvas-header">
+            <h1>Legal RAG Answer Format - Design Canvas</h1>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.8; font-size: 0.875rem;">Answer message bubbles for Legal Probe chat interface</p>
+        </div>
+        
+        <div class="answer-container">
+            <!-- Standard Answer Format -->
+            <div class="variant-label">✅ Standard Answer with Source</div>
+            
+            <div class="message-bubble">
+                <div class="bot-avatar">
+                    <i data-lucide="scale" style="width: 18px; height: 18px; color: #252323;"></i>
+                </div>
+                
+                <div class="answer-content">
+                    <div class="answer-text">
+                        Based on the uploaded document, the termination clause allows either party to terminate this agreement with 30 days written notice. The clause is found in Section 8.2 and states that either party may provide written notice to end the agreement effective 30 days from receipt. Additionally, immediate termination is permitted in cases of material breach as outlined in the following section.
+                    </div>
+                    
+                    <div class="source-info">
+                        <i data-lucide="file-text" style="width: 16px; height: 16px;"></i>
+                        <span><strong>Source:</strong> Contract.pdf</span>
+                    </div>
+                    
+                    <div class="timestamp">12:34</div>
+                </div>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <!-- Not in Document Format -->
+            <div class="variant-label">❌ Not in Document Response</div>
+            
+            <div class="message-bubble">
+                <div class="bot-avatar">
+                    <i data-lucide="scale" style="width: 18px; height: 18px; color: #252323;"></i>
+                </div>
+                
+                <div class="answer-content not-found-content">
+                    <div class="answer-text not-found-text">
+                        Not in the document.
+                    </div>
+                    
+                    <div class="source-info not-found-source">
+                        <i data-lucide="search" style="width: 16px; height: 16px;"></i>
+                        <span><strong>Searched:</strong> Contract.pdf</span>
+                    </div>
+                    
+                    <div class="timestamp">12:35</div>
+                </div>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <!-- Multi-Document Answer Format -->
+            <div class="variant-label">📚 Multi-Document Response</div>
+            
+            <div class="message-bubble">
+                <div class="bot-avatar">
+                    <i data-lucide="scale" style="width: 18px; height: 18px; color: #252323;"></i>
+                </div>
+                
+                <div class="answer-content">
+                    <div class="answer-text">
+                        The liability limitations vary across your uploaded documents. The service agreement caps damages at the contract value, while the NDA includes unlimited liability for confidentiality breaches. Both contracts exclude consequential damages but have different dispute resolution mechanisms.
+                    </div>
+                    
+                    <div class="source-info">
+                        <i data-lucide="files" style="width: 16px; height: 16px;"></i>
+                        <span><strong>Sources:</strong> ServiceAgreement.pdf, NDA_Template.pdf</span>
+                    </div>
+                    
+                    <div class="timestamp">12:36</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

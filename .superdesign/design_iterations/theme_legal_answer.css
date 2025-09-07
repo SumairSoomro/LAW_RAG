@@ -1,0 +1,39 @@
+:root {
+  --background: oklch(0.9851 0.0050 85.8654);
+  --foreground: oklch(0.1448 0.0050 85.8654);
+  --card: oklch(1.0000 0 0);
+  --card-foreground: oklch(0.1448 0.0050 85.8654);
+  --popover: oklch(1.0000 0 0);
+  --popover-foreground: oklch(0.1448 0.0050 85.8654);
+  --primary: oklch(0.1448 0.0050 85.8654);
+  --primary-foreground: oklch(0.9851 0.0050 85.8654);
+  --secondary: oklch(0.8745 0.0150 85.8654);
+  --secondary-foreground: oklch(0.1448 0.0050 85.8654);
+  --muted: oklch(0.9851 0.0050 85.8654);
+  --muted-foreground: oklch(0.4392 0.0100 85.8654);
+  --accent: oklch(0.6549 0.0800 85.8654);
+  --accent-foreground: oklch(0.1448 0.0050 85.8654);
+  --destructive: oklch(0.5830 0.2387 28.4765);
+  --destructive-foreground: oklch(0.9851 0.0050 85.8654);
+  --border: oklch(0.8745 0.0150 85.8654);
+  --input: oklch(0.8745 0.0150 85.8654);
+  --ring: oklch(0.4392 0.0100 85.8654);
+  --font-sans: Inter, sans-serif;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --radius: 0.75rem;
+  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.06);
+  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.08), 0 1px 2px -1px hsl(0 0% 0% / 0.08);
+  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 2px 4px -1px hsl(0 0% 0% / 0.10);
+  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
+  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.12), 0 8px 10px -1px hsl(0 0% 0% / 0.12);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+}
+
+/* Legal Probe Brand Colors */
+.legal-raisin-black { color: #252323 !important; background-color: #252323 !important; }
+.legal-slate-gray { color: #70798c !important; background-color: #70798c !important; }
+.legal-isabelline { color: #f5f1ed !important; background-color: #f5f1ed !important; }
+.legal-bone { color: #dad2bc !important; background-color: #dad2bc !important; }
+.legal-khaki { color: #a99985 !important; background-color: #a99985 !important; }
