@@ -148,7 +148,7 @@ Open your browser and go to `http://localhost:5173`
 
 ## Demo
 
-[Add demo video or screenshots here]
+
 
 ---
 
