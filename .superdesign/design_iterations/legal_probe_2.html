@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Probe - AI Legal Document Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #252323;
+            --bg-card: #2a2826;
+            --text-primary: #f5f1ed;
+            --text-secondary: #dad2bc;
+            --text-muted: #a99985;
+            --accent: #70798c;
+            --border: #3a3833;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        
+        .glass-effect {
+            background: rgba(42, 40, 38, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(112, 121, 140, 0.2);
+        }
+        
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(112, 121, 140, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-[#1a1a1a] text-[#f5f1ed]">
+    <!-- Navigation Bar -->
+    <nav class="flex items-center justify-between px-6 py-4 bg-[#252323] border-b border-[#3a3833]">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-gradient-to-br from-[#70798c] to-[#a99985] rounded-lg flex items-center justify-center">
+                <i data-lucide="scale" class="w-5 h-5 text-white"></i>
+            </div>
+            <span class="text-xl font-bold text-[#f5f1ed]">Legal Probe</span>
+            <div class="px-2 py-1 bg-[#70798c] text-white text-xs rounded-full font-medium ml-2">BETA</div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 text-sm text-[#a99985]">
+                <div class="w-6 h-6 bg-[#70798c] rounded-full flex items-center justify-center">
+                    <span class="text-xs font-medium text-white">JD</span>
+                </div>
+                <span>John Doe</span>
+            </div>
+            <button class="text-[#a99985] hover:text-[#f5f1ed] transition-colors p-2 hover:bg-[#3a3833] rounded-lg">
+                <i data-lucide="settings" class="w-4 h-4"></i>
+            </button>
+            <button class="text-[#a99985] hover:text-[#f5f1ed] transition-colors p-2 hover:bg-[#3a3833] rounded-lg">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Chat Container -->
+    <div class="flex flex-col h-[calc(100vh-73px)]">
+        <!-- Messages Area -->
+        <div class="flex-1 overflow-y-auto p-6 bg-gradient-to-b from-[#1a1a1a] to-[#252323]/20">
+            <div class="max-w-4xl mx-auto space-y-6">
+                <!-- Welcome Message -->
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-[#70798c] to-[#a99985] rounded-full flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <div class="glass-effect p-4 rounded-xl max-w-lg">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="font-semibold text-[#f5f1ed]">Legal Probe AI</span>
+                            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                        </div>
+                        <p class="text-[#dad2bc] mb-2">Ready to analyze your legal documents with AI precision.</p>
+                        <p class="text-[#a99985] text-sm">Upload any legal document and ask questions. I'll provide detailed answers with exact citations and page references.</p>
+                    </div>
+                </div>
+
+                <!-- Sample Conversation -->
+                <div class="flex items-start gap-3 justify-end">
+                    <div class="bg-gradient-to-r from-[#70798c] to-[#a99985] p-4 rounded-xl max-w-lg text-white">
+                        <p>Analyze the liability clauses in this partnership agreement and highlight any potential risks.</p>
+                    </div>
+                    <div class="w-8 h-8 bg-[#dad2bc] rounded-full flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="user" class="w-4 h-4 text-[#252323]"></i>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 bg-gradient-to-br from-[#70798c] to-[#a99985] rounded-full flex items-center justify-center flex-shrink-0">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <div class="glass-effect p-4 rounded-xl max-w-2xl">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="font-semibold text-[#f5f1ed]">Legal Analysis Complete</span>
+                            <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i>
+                        </div>
+                        <div class="space-y-3 text-[#dad2bc]">
+                            <p><strong class="text-[#f5f1ed]">Risk Assessment:</strong> I've identified 3 moderate-risk liability clauses in your partnership agreement:</p>
+                            <div class="bg-[#252323] p-3 rounded-lg border-l-4 border-yellow-400">
+                                <p class="text-sm"><strong>⚠️ Joint & Several Liability:</strong> Section 7.2 establishes unlimited personal liability for all partners.</p>
+                            </div>
+                            <div class="bg-[#252323] p-3 rounded-lg border-l-4 border-orange-400">
+                                <p class="text-sm"><strong>🔍 Indemnification Gap:</strong> Section 8.1 lacks specific exclusions for willful misconduct.</p>
+                            </div>
+                            <div class="bg-[#1a1a1a] p-3 rounded-lg border border-[#3a3833]">
+                                <div class="flex items-center gap-2 text-[#a99985] text-sm">
+                                    <i data-lucide="file-text" class="w-4 h-4"></i>
+                                    <span><strong>Sources:</strong> Partnership_Agreement.pdf • Pages 7-9, 12 • Sections 7.2, 8.1, 9.3</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="bg-[#252323] border-t border-[#3a3833] p-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex items-center gap-3">
+                    <!-- Upload Area -->
+                    <div class="relative">
+                        <button class="bg-[#3a3833] hover:bg-[#70798c] text-[#a99985] hover:text-white p-3 rounded-lg transition-all duration-200 hover:scale-105 glow-effect hover:glow-effect">
+                            <i data-lucide="upload" class="w-5 h-5"></i>
+                        </button>
+                        <!-- Tooltip -->
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 hover:opacity-100 transition-opacity">
+                            <div class="bg-[#1a1a1a] text-[#dad2bc] text-xs px-2 py-1 rounded whitespace-nowrap">
+                                Upload PDF
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Message Input -->
+                    <div class="flex-1 relative">
+                        <input 
+                            type="text" 
+                            class="w-full bg-[#3a3833] border border-[#70798c]/30 px-4 py-3 pr-12 rounded-lg text-[#f5f1ed] placeholder-[#a99985] focus:outline-none focus:border-[#70798c] focus:glow-effect transition-all duration-200"
+                            placeholder="Ask about contracts, analyze clauses, check compliance..."
+                        />
+                        <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
+                            <div class="text-xs text-[#a99985]">⌘ + ↵</div>
+                        </div>
+                    </div>
+
+                    <!-- Send Button -->
+                    <button class="bg-gradient-to-r from-[#70798c] to-[#a99985] hover:from-[#a99985] hover:to-[#70798c] text-white px-6 py-3 rounded-lg font-medium transition-all duration-200 hover:scale-105 glow-effect">
+                        <i data-lucide="send" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="flex items-center gap-2 mt-3">
+                    <span class="text-xs text-[#a99985]">Quick actions:</span>
+                    <button class="text-xs bg-[#3a3833] hover:bg-[#70798c] text-[#a99985] hover:text-white px-2 py-1 rounded transition-colors">
+                        Summarize document
+                    </button>
+                    <button class="text-xs bg-[#3a3833] hover:bg-[#70798c] text-[#a99985] hover:text-white px-2 py-1 rounded transition-colors">
+                        Find risks
+                    </button>
+                    <button class="text-xs bg-[#3a3833] hover:bg-[#70798c] text-[#a99985] hover:text-white px-2 py-1 rounded transition-colors">
+                        Extract key terms
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        
+        // Enhanced interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            const input = document.querySelector('input[type="text"]');
+            
+            // Keyboard shortcuts
+            input.addEventListener('keydown', function(e) {
+                if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                    console.log('Send with keyboard shortcut');
+                }
+            });
+            
+            // Auto-expand for longer messages
+            input.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.max(48, this.scrollHeight) + 'px';
+            });
+        });
+    </script>
+</body>
+</html>

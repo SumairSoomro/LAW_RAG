@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Probe - AI Legal Document Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="legal_probe_theme.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar flex items-center justify-between px-6 py-4 bg-white border-b">
+        <div class="navbar-brand flex items-center gap-3">
+            <div class="w-8 h-8 bg-[#252323] rounded-lg flex items-center justify-center">
+                <i data-lucide="scale" class="w-5 h-5 text-[#f5f1ed]"></i>
+            </div>
+            <span class="text-xl font-bold text-[#252323]">Legal Probe</span>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 text-sm text-[#70798c]">
+                <i data-lucide="user" class="w-4 h-4"></i>
+                <span>John Doe</span>
+            </div>
+            <button class="text-[#70798c] hover:text-[#252323] transition-colors">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Chat Container -->
+    <div class="chat-container flex flex-col h-[calc(100vh-73px)]">
+        <!-- Messages Area -->
+        <div class="messages-area flex-1 overflow-y-auto p-6 bg-gradient-to-br from-[#f5f1ed] to-[#f5f1ed]/80">
+            <!-- Welcome Message -->
+            <div class="message ai flex items-start gap-3 mb-6">
+                <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center border shadow-sm">
+                    <i data-lucide="bot" class="w-4 h-4 text-[#252323]"></i>
+                </div>
+                <div class="message-bubble ai bg-white border border-[#dad2bc] p-4 rounded-lg shadow-sm max-w-lg">
+                    <p class="text-[#252323] mb-2">Welcome to Legal Probe! I'm your AI legal document assistant.</p>
+                    <p class="text-[#70798c] text-sm">Upload a PDF document using the paperclip icon below, then ask me questions about its contents. I'll provide precise answers with document citations.</p>
+                </div>
+            </div>
+
+            <!-- Sample User Message -->
+            <div class="message user flex items-start gap-3 mb-6 justify-end">
+                <div class="message-bubble user bg-[#252323] text-[#f5f1ed] p-4 rounded-lg shadow-sm max-w-lg">
+                    <p>What are the key terms in section 3 of the contract?</p>
+                </div>
+                <div class="w-8 h-8 bg-[#70798c] rounded-full flex items-center justify-center">
+                    <i data-lucide="user" class="w-4 h-4 text-white"></i>
+                </div>
+            </div>
+
+            <!-- Sample AI Response -->
+            <div class="message ai flex items-start gap-3 mb-6">
+                <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center border shadow-sm">
+                    <i data-lucide="bot" class="w-4 h-4 text-[#252323]"></i>
+                </div>
+                <div class="message-bubble ai bg-white border border-[#dad2bc] p-4 rounded-lg shadow-sm max-w-lg">
+                    <p class="text-[#252323] mb-3">Based on the contract you uploaded, section 3 outlines the following key terms:</p>
+                    <ul class="text-[#252323] mb-3 ml-4 space-y-1">
+                        <li class="list-disc">Payment schedule: Net 30 days</li>
+                        <li class="list-disc">Late fees: 1.5% per month</li>
+                        <li class="list-disc">Currency: USD</li>
+                        <li class="list-disc">Payment method: Wire transfer or check</li>
+                    </ul>
+                    <div class="citation bg-[#dad2bc] text-[#70798c] p-3 rounded border-l-4 border-[#70798c] text-sm">
+                        <i data-lucide="file-text" class="w-4 h-4 inline mr-2"></i>
+                        <strong>Source:</strong> Service_Agreement.pdf, Page 2, Section 3.1-3.4
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typing Indicator (hidden by default) -->
+            <div class="message ai flex items-start gap-3 mb-6 opacity-0">
+                <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center border shadow-sm">
+                    <i data-lucide="bot" class="w-4 h-4 text-[#252323]"></i>
+                </div>
+                <div class="message-bubble ai bg-white border border-[#dad2bc] p-4 rounded-lg shadow-sm">
+                    <div class="typing-indicator flex items-center gap-2">
+                        <span class="text-[#70798c]">Legal Probe is thinking...</span>
+                        <div class="typing-dots flex gap-1">
+                            <div class="typing-dot w-2 h-2 bg-[#70798c] rounded-full"></div>
+                            <div class="typing-dot w-2 h-2 bg-[#70798c] rounded-full"></div>
+                            <div class="typing-dot w-2 h-2 bg-[#70798c] rounded-full"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-area bg-white border-t border-[#dad2bc] p-4 shadow-lg">
+            <div class="input-container flex items-center gap-2 sm:gap-3 max-w-4xl mx-auto">
+                <!-- Upload Button -->
+                <button class="upload-btn bg-[#dad2bc] hover:bg-[#a99985] text-[#252323] p-2 sm:p-3 rounded-lg transition-colors duration-200 shadow-md flex-shrink-0">
+                    <i data-lucide="paperclip" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                </button>
+
+                <!-- Message Input -->
+                <div class="flex-1 relative">
+                    <input 
+                        type="text" 
+                        class="message-input w-full bg-white border border-[#dad2bc] px-3 sm:px-4 py-2 sm:py-3 pr-12 sm:pr-16 rounded-lg text-[#252323] placeholder-[#70798c] focus:outline-none focus:border-[#70798c] focus:shadow-lg transition-all duration-200"
+                        placeholder="Ask a question..."
+                    />
+                    
+                    <!-- Send Button - positioned inside input on mobile -->
+                    <button class="send-btn absolute right-2 top-1/2 -translate-y-1/2 overflow-hidden bg-[#252323] hover:bg-[#70798c] text-[#f5f1ed] p-2 sm:px-4 sm:py-2 rounded-md sm:rounded-lg font-medium transition-colors duration-200 shadow-md">
+                        <i data-lucide="send" class="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-150"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Upload Progress (hidden by default) -->
+            <div class="upload-progress mt-3 max-w-4xl mx-auto opacity-0">
+                <div class="flex items-center justify-between text-sm text-[#70798c] mb-2">
+                    <span>Uploading: Contract.pdf</span>
+                    <span>75%</span>
+                </div>
+                <div class="progress-bar bg-[#dad2bc] rounded-full h-2">
+                    <div class="progress-fill bg-[#a99985] h-full rounded-full" style="width: 75%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes ripple {
+            0% {
+                transform: scale(0);
+                opacity: 0.6;
+            }
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+    </style>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Simple interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageInput = document.querySelector('.message-input');
+            const sendBtn = document.querySelector('.send-btn');
+            
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    // Add message logic here
+                    console.log('Send message:', this.value);
+                }
+            });
+
+            sendBtn.addEventListener('click', function(e) {
+                const message = messageInput.value.trim();
+                if (message) {
+                    // Add satisfying click feedback
+                    const icon = this.querySelector('i');
+                    const btn = this;
+                    
+                    // Icon animation
+                    icon.style.transform = 'rotate(45deg) scale(0.8)';
+                    
+                    // Create ripple effect
+                    const rect = btn.getBoundingClientRect();
+                    const ripple = document.createElement('div');
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}px;
+                        top: ${y}px;
+                        background: rgba(255, 255, 255, 0.3);
+                        border-radius: 50%;
+                        transform: scale(0);
+                        animation: ripple 600ms ease-out;
+                        pointer-events: none;
+                    `;
+                    
+                    btn.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        icon.style.transform = '';
+                        if (ripple.parentNode) {
+                            ripple.parentNode.removeChild(ripple);
+                        }
+                    }, 600);
+                    
+                    console.log('Send message:', message);
+                    messageInput.value = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

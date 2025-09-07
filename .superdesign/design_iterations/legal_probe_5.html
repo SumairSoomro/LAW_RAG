@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Probe - Executive Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #f5f1ed 0%, #dad2bc 100%);
+        }
+        .card-shadow { box-shadow: 0 4px 12px rgba(37, 35, 35, 0.08), 0 2px 6px rgba(37, 35, 35, 0.04); }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(37, 35, 35, 0.12); }
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(218, 210, 188, 0.3); 
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="bg-white/95 backdrop-blur-md border-b border-[#dad2bc]/30 sticky top-0 z-40">
+        <div class="px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-[#252323] to-[#70798c] rounded-xl flex items-center justify-center">
+                            <i data-lucide="scale" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold text-[#252323]">Legal Probe</h1>
+                            <p class="text-xs text-[#70798c]">AI Document Intelligence</p>
+                        </div>
+                    </div>
+                    
+                    <div class="hidden lg:flex items-center gap-6">
+                        <a href="#" class="text-sm font-medium text-[#252323] hover:text-[#70798c] transition-colors">Dashboard</a>
+                        <a href="#" class="text-sm text-[#70798c] hover:text-[#252323] transition-colors">Documents</a>
+                        <a href="#" class="text-sm text-[#70798c] hover:text-[#252323] transition-colors">Analytics</a>
+                        <a href="#" class="text-sm text-[#70798c] hover:text-[#252323] transition-colors">Settings</a>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div class="hidden md:flex items-center gap-3 px-4 py-2 bg-[#f5f1ed] rounded-full border border-[#dad2bc]">
+                        <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                        <span class="text-sm text-[#252323]">3 documents active</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-sm font-medium text-[#252323]">John Doe</p>
+                            <p class="text-xs text-[#70798c]">Senior Legal Counsel</p>
+                        </div>
+                        <div class="w-10 h-10 bg-gradient-to-br from-[#70798c] to-[#a99985] rounded-full flex items-center justify-center">
+                            <span class="text-sm font-semibold text-white">JD</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="min-h-screen px-6 py-6">
+        <div class="max-w-7xl mx-auto">
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="glass-card p-6 rounded-2xl card-shadow card-hover transition-all duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                            <i data-lucide="file-text" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-2xl font-bold text-[#252323]">24</p>
+                            <p class="text-sm text-[#70798c]">Documents</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl card-shadow card-hover transition-all duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                            <i data-lucide="check-circle" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-2xl font-bold text-[#252323]">156</p>
+                            <p class="text-sm text-[#70798c]">Queries Solved</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl card-shadow card-hover transition-all duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center">
+                            <i data-lucide="alert-triangle" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-2xl font-bold text-[#252323]">7</p>
+                            <p class="text-sm text-[#70798c]">Risk Flags</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl card-shadow card-hover transition-all duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                            <i data-lucide="clock" class="w-6 h-6 text-white"></i>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-2xl font-bold text-[#252323]">89%</p>
+                            <p class="text-sm text-[#70798c]">Time Saved</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Chat Interface -->
+            <div class="grid grid-cols-1 xl:grid-cols-4 gap-6">
+                <!-- Chat Area -->
+                <div class="xl:col-span-3">
+                    <div class="glass-card rounded-2xl card-shadow h-[600px] flex flex-col">
+                        <!-- Chat Header -->
+                        <div class="p-6 border-b border-[#dad2bc]/30">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-[#252323] to-[#70798c] rounded-xl flex items-center justify-center">
+                                        <i data-lucide="bot" class="w-5 h-5 text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-semibold text-[#252323]">Legal Analysis Assistant</h3>
+                                        <p class="text-sm text-[#70798c]">Analyzing: Service Agreement v2.1</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="px-3 py-1 bg-green-100 text-green-800 text-xs rounded-full font-medium">
+                                        Active
+                                    </div>
+                                    <button class="p-2 text-[#70798c] hover:text-[#252323] hover:bg-[#f5f1ed] rounded-lg transition-colors">
+                                        <i data-lucide="more-horizontal" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Messages -->
+                        <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                            <!-- AI Welcome -->
+                            <div class="flex items-start gap-4">
+                                <div class="w-8 h-8 bg-gradient-to-br from-[#252323] to-[#70798c] rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="sparkles" class="w-4 h-4 text-white"></i>
+                                </div>
+                                <div class="bg-gradient-to-br from-white to-[#f5f1ed] p-4 rounded-2xl rounded-tl-lg shadow-sm border border-[#dad2bc]/50 max-w-lg">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="font-semibold text-[#252323]">Legal Probe</span>
+                                        <i data-lucide="verified" class="w-4 h-4 text-blue-500"></i>
+                                    </div>
+                                    <p class="text-[#252323] mb-3">I've completed a comprehensive analysis of your Service Agreement v2.1. The document contains 24 pages with 12 major sections.</p>
+                                    <div class="bg-[#f5f1ed] p-3 rounded-lg border-l-4 border-[#70798c]">
+                                        <p class="text-sm text-[#252323] font-medium">Ready to assist with:</p>
+                                        <ul class="text-sm text-[#70798c] mt-1 space-y-1">
+                                            <li>• Contract term analysis</li>
+                                            <li>• Risk assessment</li>
+                                            <li>• Compliance checking</li>
+                                            <li>• Clause recommendations</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- User Message -->
+                            <div class="flex items-start gap-4 justify-end">
+                                <div class="bg-gradient-to-r from-[#252323] to-[#70798c] p-4 rounded-2xl rounded-tr-lg shadow-sm max-w-lg text-white">
+                                    <p>Provide a risk assessment for the indemnification clauses and suggest any improvements needed for better protection.</p>
+                                </div>
+                                <div class="w-8 h-8 bg-gradient-to-br from-[#70798c] to-[#a99985] rounded-full flex items-center justify-center flex-shrink-0">
+                                    <span class="text-sm font-medium text-white">JD</span>
+                                </div>
+                            </div>
+
+                            <!-- AI Response -->
+                            <div class="flex items-start gap-4">
+                                <div class="w-8 h-8 bg-gradient-to-br from-[#252323] to-[#70798c] rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="shield-check" class="w-4 h-4 text-white"></i>
+                                </div>
+                                <div class="bg-gradient-to-br from-white to-[#f5f1ed] p-4 rounded-2xl rounded-tl-lg shadow-sm border border-[#dad2bc]/50 max-w-2xl">
+                                    <div class="flex items-center gap-2 mb-3">
+                                        <span class="font-semibold text-[#252323]">Indemnification Risk Analysis</span>
+                                        <div class="px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs rounded-full">Medium Risk</div>
+                                    </div>
+                                    
+                                    <div class="space-y-4">
+                                        <div class="p-4 bg-red-50 border-l-4 border-red-400 rounded-lg">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <i data-lucide="alert-circle" class="w-4 h-4 text-red-500"></i>
+                                                <h4 class="font-medium text-red-800">High Risk Issues</h4>
+                                            </div>
+                                            <ul class="text-sm text-red-700 space-y-1">
+                                                <li>• Unlimited liability exposure (Section 11.2)</li>
+                                                <li>• No carve-outs for gross negligence</li>
+                                            </ul>
+                                        </div>
+
+                                        <div class="p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <i data-lucide="alert-triangle" class="w-4 h-4 text-yellow-500"></i>
+                                                <h4 class="font-medium text-yellow-800">Recommendations</h4>
+                                            </div>
+                                            <ul class="text-sm text-yellow-700 space-y-1">
+                                                <li>• Add monetary cap on indemnification</li>
+                                                <li>• Include exclusions for willful misconduct</li>
+                                                <li>• Require insurance coverage minimums</li>
+                                            </ul>
+                                        </div>
+
+                                        <div class="bg-[#dad2bc]/30 p-3 rounded-lg">
+                                            <div class="flex items-center gap-2 text-[#70798c] text-sm">
+                                                <i data-lucide="file-text" class="w-4 h-4"></i>
+                                                <span><strong>References:</strong> Sections 11.1-11.4 • Pages 18-20</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Input Area -->
+                        <div class="p-6 border-t border-[#dad2bc]/30">
+                            <div class="flex items-end gap-4">
+                                <button class="bg-gradient-to-br from-[#f5f1ed] to-[#dad2bc] hover:from-[#dad2bc] hover:to-[#a99985] p-3 rounded-xl transition-all duration-200 shadow-sm">
+                                    <i data-lucide="upload" class="w-5 h-5 text-[#252323]"></i>
+                                </button>
+                                <div class="flex-1 relative">
+                                    <textarea 
+                                        placeholder="Ask about contract terms, risks, compliance, or request document analysis..."
+                                        class="w-full bg-gradient-to-r from-[#f5f1ed]/50 to-white border border-[#dad2bc] px-4 py-3 pr-16 rounded-xl text-[#252323] placeholder-[#a99985] focus:outline-none focus:border-[#70798c] focus:from-white focus:to-white transition-all duration-200 resize-none shadow-sm"
+                                        rows="1"
+                                    ></textarea>
+                                    <button class="absolute right-3 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-[#252323] to-[#70798c] hover:from-[#70798c] hover:to-[#252323] text-white p-2 rounded-lg transition-all duration-200">
+                                        <i data-lucide="send" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="space-y-6">
+                    <!-- Quick Actions -->
+                    <div class="glass-card p-6 rounded-2xl card-shadow">
+                        <h3 class="font-semibold text-[#252323] mb-4">Quick Actions</h3>
+                        <div class="space-y-3">
+                            <button class="w-full text-left p-3 bg-gradient-to-r from-[#f5f1ed] to-white hover:from-[#dad2bc] hover:to-[#f5f1ed] rounded-lg transition-all duration-200 border border-[#dad2bc]/50">
+                                <div class="flex items-center gap-3">
+                                    <i data-lucide="file-search" class="w-4 h-4 text-[#70798c]"></i>
+                                    <span class="text-sm text-[#252323]">Full Contract Analysis</span>
+                                </div>
+                            </button>
+                            <button class="w-full text-left p-3 bg-gradient-to-r from-[#f5f1ed] to-white hover:from-[#dad2bc] hover:to-[#f5f1ed] rounded-lg transition-all duration-200 border border-[#dad2bc]/50">
+                                <div class="flex items-center gap-3">
+                                    <i data-lucide="shield-alert" class="w-4 h-4 text-[#70798c]"></i>
+                                    <span class="text-sm text-[#252323]">Risk Assessment</span>
+                                </div>
+                            </button>
+                            <button class="w-full text-left p-3 bg-gradient-to-r from-[#f5f1ed] to-white hover:from-[#dad2bc] hover:to-[#f5f1ed] rounded-lg transition-all duration-200 border border-[#dad2bc]/50">
+                                <div class="flex items-center gap-3">
+                                    <i data-lucide="compare" class="w-4 h-4 text-[#70798c]"></i>
+                                    <span class="text-sm text-[#252323]">Compare Versions</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Documents -->
+                    <div class="glass-card p-6 rounded-2xl card-shadow">
+                        <h3 class="font-semibold text-[#252323] mb-4">Active Documents</h3>
+                        <div class="space-y-3">
+                            <div class="p-3 bg-gradient-to-r from-[#f5f1ed] to-white rounded-lg border border-[#dad2bc]/50">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-gradient-to-br from-green-400 to-green-500 rounded-lg flex items-center justify-center">
+                                        <i data-lucide="file-text" class="w-4 h-4 text-white"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-[#252323] truncate">Service Agreement v2.1</p>
+                                        <p class="text-xs text-[#70798c]">24 pages • Currently active</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="p-3 bg-gradient-to-r from-white to-[#f5f1ed] rounded-lg border border-[#dad2bc]/50 opacity-75">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-gradient-to-br from-[#a99985] to-[#70798c] rounded-lg flex items-center justify-center">
+                                        <i data-lucide="file-text" class="w-4 h-4 text-white"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-[#252323] truncate">Privacy Policy</p>
+                                        <p class="text-xs text-[#70798c]">12 pages • 2 hours ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        
+        // Auto-resize textarea
+        document.querySelector('textarea').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Probe - AI Legal Document Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-[#f5f1ed] text-[#252323]">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-80 bg-white border-r border-[#dad2bc] flex flex-col">
+            <!-- Sidebar Header -->
+            <div class="p-6 border-b border-[#dad2bc]">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 bg-[#252323] rounded-lg flex items-center justify-center">
+                        <i data-lucide="scale" class="w-5 h-5 text-[#f5f1ed]"></i>
+                    </div>
+                    <span class="text-lg font-bold">Legal Probe</span>
+                </div>
+                <button class="w-full bg-[#252323] hover:bg-[#70798c] text-white py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    New Analysis
+                </button>
+            </div>
+
+            <!-- Document Library -->
+            <div class="flex-1 overflow-y-auto p-4">
+                <h3 class="text-sm font-semibold text-[#70798c] uppercase tracking-wide mb-3">Recent Documents</h3>
+                <div class="space-y-2">
+                    <div class="p-3 bg-[#f5f1ed] hover:bg-[#dad2bc] rounded-lg cursor-pointer transition-colors group">
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="file-text" class="w-4 h-4 text-[#70798c] mt-0.5 flex-shrink-0"></i>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-sm text-[#252323] truncate">Service Agreement v2.1</p>
+                                <p class="text-xs text-[#70798c]">Uploaded 2 hours ago</p>
+                                <p class="text-xs text-[#a99985]">24 pages • Contract</p>
+                            </div>
+                            <i data-lucide="more-vertical" class="w-4 h-4 text-[#a99985] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-white hover:bg-[#f5f1ed] rounded-lg cursor-pointer transition-colors group">
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="file-text" class="w-4 h-4 text-[#70798c] mt-0.5 flex-shrink-0"></i>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-sm text-[#252323] truncate">Privacy Policy Draft</p>
+                                <p class="text-xs text-[#70798c]">Yesterday</p>
+                                <p class="text-xs text-[#a99985]">12 pages • Policy</p>
+                            </div>
+                            <i data-lucide="more-vertical" class="w-4 h-4 text-[#a99985] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-white hover:bg-[#f5f1ed] rounded-lg cursor-pointer transition-colors group">
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="file-text" class="w-4 h-4 text-[#70798c] mt-0.5 flex-shrink-0"></i>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-sm text-[#252323] truncate">Partnership Agreement</p>
+                                <p class="text-xs text-[#70798c]">3 days ago</p>
+                                <p class="text-xs text-[#a99985]">18 pages • Agreement</p>
+                            </div>
+                            <i data-lucide="more-vertical" class="w-4 h-4 text-[#a99985] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Area -->
+                <div class="mt-6">
+                    <h3 class="text-sm font-semibold text-[#70798c] uppercase tracking-wide mb-3">Upload New Document</h3>
+                    <div class="border-2 border-dashed border-[#dad2bc] rounded-lg p-6 text-center hover:border-[#70798c] transition-colors cursor-pointer">
+                        <i data-lucide="upload-cloud" class="w-8 h-8 text-[#a99985] mx-auto mb-2"></i>
+                        <p class="text-sm text-[#70798c] font-medium">Drop PDF here or click to browse</p>
+                        <p class="text-xs text-[#a99985] mt-1">Max size: 50MB</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Footer -->
+            <div class="p-4 border-t border-[#dad2bc]">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-[#70798c] rounded-full flex items-center justify-center">
+                        <span class="text-sm font-medium text-white">JD</span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-[#252323]">John Doe</p>
+                        <p class="text-xs text-[#70798c]">john@company.com</p>
+                    </div>
+                    <button class="text-[#a99985] hover:text-[#252323] transition-colors">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col">
+            <!-- Header -->
+            <div class="bg-white border-b border-[#dad2bc] p-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-xl font-semibold text-[#252323]">Service Agreement v2.1</h1>
+                        <p class="text-sm text-[#70798c]">Currently analyzing • 24 pages • Uploaded 2 hours ago</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="text-[#70798c] hover:text-[#252323] p-2 hover:bg-[#f5f1ed] rounded-lg transition-colors">
+                            <i data-lucide="download" class="w-4 h-4"></i>
+                        </button>
+                        <button class="text-[#70798c] hover:text-[#252323] p-2 hover:bg-[#f5f1ed] rounded-lg transition-colors">
+                            <i data-lucide="share-2" class="w-4 h-4"></i>
+                        </button>
+                        <button class="text-[#70798c] hover:text-[#252323] p-2 hover:bg-[#f5f1ed] rounded-lg transition-colors">
+                            <i data-lucide="more-horizontal" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="flex-1 overflow-y-auto p-6 bg-[#f5f1ed]/50">
+                <div class="max-w-4xl mx-auto space-y-6">
+                    <!-- AI Welcome -->
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 bg-[#252323] rounded-full flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="bot" class="w-4 h-4 text-white"></i>
+                        </div>
+                        <div class="bg-white border border-[#dad2bc] p-4 rounded-xl shadow-sm max-w-lg">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="font-semibold text-[#252323]">Legal Probe</span>
+                                <div class="px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded-full">Ready</div>
+                            </div>
+                            <p class="text-[#252323] mb-2">I've successfully analyzed your Service Agreement v2.1.</p>
+                            <p class="text-[#70798c] text-sm">Ask me anything about the contract terms, obligations, risks, or specific clauses. I can also provide summaries or comparisons.</p>
+                        </div>
+                    </div>
+
+                    <!-- User Message -->
+                    <div class="flex items-start gap-3 justify-end">
+                        <div class="bg-[#252323] text-white p-4 rounded-xl shadow-sm max-w-lg">
+                            <p>What are the termination clauses and notice requirements in this contract?</p>
+                        </div>
+                        <div class="w-8 h-8 bg-[#70798c] rounded-full flex items-center justify-center flex-shrink-0">
+                            <span class="text-sm font-medium text-white">JD</span>
+                        </div>
+                    </div>
+
+                    <!-- AI Response -->
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 bg-[#252323] rounded-full flex items-center justify-center flex-shrink-0">
+                            <i data-lucide="bot" class="w-4 h-4 text-white"></i>
+                        </div>
+                        <div class="bg-white border border-[#dad2bc] p-4 rounded-xl shadow-sm max-w-2xl">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="font-semibold text-[#252323]">Termination Analysis</span>
+                                <i data-lucide="search" class="w-4 h-4 text-[#70798c]"></i>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="p-3 bg-[#f5f1ed] rounded-lg border-l-4 border-[#252323]">
+                                    <h4 class="font-medium text-[#252323] mb-1">Standard Termination</h4>
+                                    <p class="text-sm text-[#70798c]">Either party may terminate with 30 days written notice without cause</p>
+                                </div>
+                                <div class="p-3 bg-[#f5f1ed] rounded-lg border-l-4 border-red-500">
+                                    <h4 class="font-medium text-[#252323] mb-1">Immediate Termination</h4>
+                                    <p class="text-sm text-[#70798c]">Material breach, bankruptcy, or failure to pay within 15 days of notice</p>
+                                </div>
+                                <div class="p-3 bg-[#dad2bc] rounded-lg">
+                                    <div class="flex items-center gap-2 text-[#70798c] text-sm">
+                                        <i data-lucide="file-text" class="w-4 h-4"></i>
+                                        <span><strong>References:</strong> Section 12.1-12.3 (Pages 19-20)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="bg-white border-t border-[#dad2bc] p-4">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex items-end gap-3">
+                        <div class="flex-1">
+                            <textarea 
+                                class="w-full bg-[#f5f1ed] border border-[#dad2bc] px-4 py-3 rounded-lg text-[#252323] placeholder-[#70798c] focus:outline-none focus:border-[#70798c] focus:bg-white transition-all duration-200 resize-none"
+                                placeholder="Ask about clauses, risks, obligations, or request document analysis..."
+                                rows="1"
+                            ></textarea>
+                        </div>
+                        <button class="bg-[#252323] hover:bg-[#70798c] text-white p-3 rounded-lg transition-colors">
+                            <i data-lucide="send" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Suggestions -->
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <button class="text-xs bg-[#f5f1ed] hover:bg-[#dad2bc] text-[#70798c] hover:text-[#252323] px-3 py-1 rounded-full transition-colors border border-[#dad2bc]">
+                            💼 Payment terms
+                        </button>
+                        <button class="text-xs bg-[#f5f1ed] hover:bg-[#dad2bc] text-[#70798c] hover:text-[#252323] px-3 py-1 rounded-full transition-colors border border-[#dad2bc]">
+                            ⚖️ Liability clauses
+                        </button>
+                        <button class="text-xs bg-[#f5f1ed] hover:bg-[#dad2bc] text-[#70798c] hover:text-[#252323] px-3 py-1 rounded-full transition-colors border border-[#dad2bc]">
+                            📋 Key obligations
+                        </button>
+                        <button class="text-xs bg-[#f5f1ed] hover:bg-[#dad2bc] text-[#70798c] hover:text-[#252323] px-3 py-1 rounded-full transition-colors border border-[#dad2bc]">
+                            🔍 Full summary
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        
+        // Auto-resize textarea
+        document.querySelector('textarea').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+    </script>
+</body>
+</html>
