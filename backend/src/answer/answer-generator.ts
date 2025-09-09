@@ -97,37 +97,29 @@ export class AnswerGeneratorService {
   private buildSystemPrompt(): string {
     return `You are a strict legal assistant for law students and professionals. Your role is to provide accurate answers based ONLY on the provided context from legal documents.
 
-CRITICAL RULES:
-1. Use ONLY the context provided below. Never use external knowledge.
-2. If the answer is not in the context, respond exactly: "Not in the document."
-3. For every factual statement, cite the source using the EXACT document filename shown in the context (e.g., if you see "Source 1: filename.pdf", cite as "(filename.pdf)").
-4. Provide a clear explanation of your reasoning process.
-5. Be precise with legal terminology and citations.
-6. If information is partially in the document but incomplete, say what you can find and note what's missing.
-7. NEVER refer to "chunks" or "sources" by number in your response (e.g., don't say "Chunk 1", "Source 1", "Document 1", or any numbered references).
+    CRITICAL RULES:
+    1. Use ONLY the context provided below. Never use external knowledge.
+    2. If the answer is not in the context, respond exactly: "Not in the document."
+    3. Provide a clear explanation of your reasoning process.
+    4. Be precise with legal terminology and citations.
+    5. If information is partially in the document but incomplete, say what you can find and note what's missing.
+    6. NEVER refer to "chunks" or "sources" by number in your response (e.g., don't say "Chunk 1", "Source 1", "Document 1", or any numbered references).
 
-RESPONSE FORMAT:
-- Give a direct answer to the question
-- Cite sources for each claim using the EXACT document filename from the context: (filename.pdf)
-- Use the complete filename as it appears after the colon in the source headers
-- Explain your reasoning based on the document content, not source numbers
-- If uncertain or information is missing, be explicit about limitations
-- Focus on the legal content, not the internal organization of the context`;
+    RESPONSE FORMAT:
+    - Give a direct answer to the question
+    - Explain your reasoning based on the document content, not source numbers
+    - If uncertain or information is missing, be explicit about limitations
+    - Focus on the legal content, not the internal organization of the context`;
   }
 
   private buildUserPrompt(query: string, contextChunks: string): string {
-    return `Context from legal documents:
-${contextChunks}
-
-User question: ${query}
-
-Please answer the question using only the provided context. Remember to cite sources and explain your reasoning.`;
+    return `Context from legal documents: ${contextChunks} User question: ${query} Please answer the question using only the provided context. Remember to cite sources and explain your reasoning.`;
   }
 
   private parseAnswer(answerText: string, searchResults: SearchResult[]): AnswerResponse {
     const foundInDocument = !answerText.toLowerCase().includes("not in the document");
     
-    const sources = this.extractSources(answerText, searchResults);
+    const sources = this.extractSources(searchResults);
     
     const reasoningMatch = answerText.match(/(?:reasoning|explanation|because|since|this is based on)[\s:.]+(.*?)(?:\n\n|$)/is);
     const reasoning = reasoningMatch ? reasoningMatch[1].trim() : undefined;
@@ -145,7 +137,8 @@ Please answer the question using only the provided context. Remember to cite sou
     return response;
   }
 
-  private extractSources(answerText: string, searchResults: SearchResult[]): Array<{ documentName: string }> {
+  private extractSources( searchResults: SearchResult[]): Array<{ documentName: string }> {
+    /*
     const sources: Array<{ documentName: string }> = [];
     const seenSources = new Set<string>();
   
@@ -164,8 +157,27 @@ Please answer the question using only the provided context. Remember to cite sou
         }
       }
     });
-
     return sources;
+    
+
+    if (searchResults.length === 0) {
+      return [];
+    }
+    const uniqueDocuments = new Set<string>();
+    
+    searchResults.forEach(result => {
+      uniqueDocuments.add(result.metadata.documentName);
+    });
+  
+    return Array.from(uniqueDocuments).map(docName => ({
+      documentName: docName
+    }));
+    */
+    const highestScoringChunk = searchResults[0];
+  
+    return [{ documentName: highestScoringChunk.metadata.documentName }];
+  
+
   }
 
   async validateAnswer(

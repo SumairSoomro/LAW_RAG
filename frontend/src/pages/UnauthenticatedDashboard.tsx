@@ -70,7 +70,7 @@ export const UnauthenticatedDashboard: React.FC = () => {
               </div>
               <h3 className="text-lg font-semibold text-[#252323] mb-2">Source Citations</h3>
               <p className="text-[#70798c] text-sm">
-                Every answer includes exact page and section references
+                Every answer includes Document References 
               </p>
             </div>
           </div>
@@ -106,7 +106,7 @@ export const UnauthenticatedDashboard: React.FC = () => {
                 <div className="bg-[#f5f1ed] p-3 rounded-lg rounded-tl-none text-sm">
                   <p className="text-[#252323] mb-2">Section 8.2 allows termination with 30-day notice...</p>
                   <div className="text-xs text-[#70798c] bg-white px-2 py-1 rounded border-l-2 border-[#70798c]">
-                    📄 Source: Contract.pdf, Page 12, Section 8.2
+                    📄 Main Source: Contract.pdf
                   </div>
                 </div>
               </div>

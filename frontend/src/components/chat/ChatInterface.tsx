@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Paperclip, Send, Bot, User, FileText } from 'lucide-react';
+import { Paperclip, Send, Bot, User, FileText, Scale } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { DocumentService } from '../../services/documentService';
 import { ChatService } from '../../services/chatService';
@@ -22,13 +22,14 @@ export const ChatInterface: React.FC = () => {
     {
       id: '1',
       type: 'ai',
-      content: "Welcome to Legal Probe! I'm your AI legal document assistant. Upload a PDF document using the paperclip icon below, then ask me questions about its contents. I'll provide precise answers with document citations.",
+      content: "Welcome to Legal Probe! I'm your AI legal document assistant. Upload a PDF document using the paperclip icon below or drag and drop a PDF file anywhere on this screen, then ask me questions about its contents. I'll provide precise answers with document citations.",
       timestamp: new Date()
     }
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{ fileName: string; progress: number } | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -87,19 +88,22 @@ export const ChatInterface: React.FC = () => {
     }
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  const validateAndProcessFile = async (file: File) => {
     if (file.type !== 'application/pdf') {
       alert('Please upload a PDF file only.');
-      return;
+      return false;
     }
 
     if (file.size > 50 * 1024 * 1024) { // 50MB limit
       alert('File size must be less than 50MB.');
-      return;
+      return false;
     }
+
+    return true;
+  };
+
+  const processFileUpload = async (file: File) => {
+    if (!(await validateAndProcessFile(file))) return;
 
     setUploadProgress({ fileName: file.name, progress: 0 });
     
@@ -143,6 +147,13 @@ export const ChatInterface: React.FC = () => {
       };
       setMessages(prev => [...prev, errorMessage]);
     }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    await processFileUpload(file);
     
     // Clear the file input
     if (e.target) {
@@ -152,6 +163,39 @@ export const ChatInterface: React.FC = () => {
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
+  };
+
+  // Drag and Drop handlers
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isDragOver) {
+      setIsDragOver(true);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Only set to false if we're leaving the container
+    if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+      setIsDragOver(false);
+    }
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+
+    if (!user) return;
+
+    const files = Array.from(e.dataTransfer.files);
+    const file = files[0];
+    
+    if (!file) return;
+    
+    await processFileUpload(file);
   };
 
   const formatTimestamp = (date: Date) => {
@@ -169,7 +213,25 @@ export const ChatInterface: React.FC = () => {
   };
 
   return (
-    <div className="chat-container flex flex-col h-[calc(100vh-73px)]">
+    <div 
+      className={`chat-container flex flex-col h-[calc(100vh-73px)] relative ${isDragOver ? 'bg-blue-50' : ''}`}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      {/* Drag and Drop Overlay */}
+      {isDragOver && (
+        <div className="absolute inset-0 bg-blue-50/90 border-4 border-dashed border-blue-300 z-50 flex items-center justify-center">
+          <div className="text-center p-8">
+            <div className="w-8 h-8 bg-[#252323] rounded-lg flex items-center justify-center mx-auto mb-4">
+              <Scale className="w-5 h-5 text-[#f5f1ed]" />
+            </div>
+            <h3 className="text-xl font-semibold text-blue-800 mb-2">Drop your PDF here</h3>
+            <p className="text-blue-600">Only PDF files up to 50MB are allowed</p>
+          </div>
+        </div>
+      )}
+
       {/* Messages Area */}
       <div className="messages-area flex-1 overflow-y-auto p-4 sm:p-6 bg-gradient-to-br from-[#f5f1ed] to-[#f5f1ed]/80">
         <div className="max-w-4xl mx-auto space-y-6">
@@ -181,8 +243,8 @@ export const ChatInterface: React.FC = () => {
               }`}
             >
               {message.type === 'ai' && (
-                <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center border shadow-sm flex-shrink-0">
-                  <Bot className="w-4 h-4 text-[#252323]" />
+                <div className="w-8 h-8 bg-[#252323] rounded-lg flex items-center justify-center">
+                  <Scale className="w-5 h-5 text-[#f5f1ed]" />
                 </div>
               )}
               
@@ -200,18 +262,11 @@ export const ChatInterface: React.FC = () => {
                   dangerouslySetInnerHTML={{ __html: formatMessageContent(message.content) }}
                 />
                 
-                {message.sources && message.sources.length > 0 ? (
+                {message.sources && message.sources.length > 0 && message.foundInDocument !== false ? (
                   <div className="source-info flex items-center gap-2 text-[#70798c] text-sm p-3 bg-[#f5f1ed] rounded border-l-4 border-[#70798c] mt-3">
-                    {message.sources.length === 1 ? (
-                      <FileText className="w-4 h-4" />
-                    ) : (
-                      <div className="flex">
-                        <FileText className="w-4 h-4" />
-                        <FileText className="w-4 h-4 -ml-2" />
-                      </div>
-                    )}
+                    <FileText className="w-4 h-4" />
                     <span>
-                      <strong>Source{message.sources.length > 1 ? 's' : ''}:</strong> {message.sources.map(source => source.documentName).join(', ')}
+                      <strong>Main Source:</strong> {message.sources[0].documentName}
                     </span>
                   </div>
                 ) : message.foundInDocument === false ? (
@@ -242,8 +297,8 @@ export const ChatInterface: React.FC = () => {
 
           {isLoading && (
             <div className="message ai flex items-start gap-3 mb-6">
-              <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center border shadow-sm flex-shrink-0">
-                <Bot className="w-4 h-4 text-[#252323]" />
+              <div className="w-8 h-8 bg-[#252323] rounded-lg flex items-center justify-center">
+                <Scale className="w-5 h-5 text-[#f5f1ed]" />
               </div>
               <div className="message-bubble ai bg-white border border-[#dad2bc] p-4 rounded-lg shadow-sm">
                 <div className="flex items-center gap-2 text-[#70798c]">
@@ -316,7 +371,7 @@ export const ChatInterface: React.FC = () => {
               <button
                 type="submit"
                 disabled={!user || !inputMessage.trim() || isLoading}
-                className="send-btn absolute right-2 top-1/2 -translate-y-1/2 overflow-hidden bg-[#252323] hover:bg-[#70798c] text-[#f5f1ed] p-2 sm:px-4 sm:py-2 rounded-md sm:rounded-lg font-medium transition-colors duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                className="send-btn absolute right-2 top-1/2 -translate-y-1/2 overflow-hidden bg-black hover:bg-[#70798c] text-[#f5f1ed] p-2 sm:px-4 sm:py-2 rounded-md sm:rounded-lg font-medium transition-colors duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Send className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-150" />
               </button>
