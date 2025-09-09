@@ -148,7 +148,9 @@ Open your browser and go to `http://localhost:5173`
 
 ## Demo
 
-[Add demo video or screenshots here]
+https://github.com/user-attachments/assets/3bd9634f-7e99-4e9d-904c-a5f2acc98bed
+
+
 
 ---
 
