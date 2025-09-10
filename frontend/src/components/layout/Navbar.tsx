@@ -22,7 +22,7 @@ export const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="navbar flex items-center justify-between px-4 sm:px-6 py-4 bg-white border-b border-[#dad2bc]">
+    <nav className="navbar relative flex items-center justify-between px-4 sm:px-6 py-4 bg-white border-b border-[#dad2bc]">
       {/* Logo */}
       <div className="navbar-brand flex items-center gap-3">
         <div className="w-8 h-8 bg-[#252323] rounded-lg flex items-center justify-center">
@@ -105,13 +105,13 @@ export const Navbar: React.FC = () => {
               </>
             ) : (
               // Unauthenticated Mobile Menu
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <button 
                   onClick={() => {
                     navigate('/login');
                     setMobileMenuOpen(false);
                   }}
-                  className="w-full text-left text-[#70798c] hover:text-[#252323] transition-colors py-2"
+                  className="w-full text-center text-[#70798c] hover:text-[#252323] transition-colors px-3 py-1 rounded-lg hover:bg-[#f5f1ed]"
                 >
                   Login
                 </button>
@@ -120,7 +120,7 @@ export const Navbar: React.FC = () => {
                     navigate('/signup');
                     setMobileMenuOpen(false);
                   }}
-                  className="w-full bg-[#252323] hover:bg-[#70798c] text-[#f5f1ed] px-4 py-2 rounded-lg transition-colors font-medium"
+                  className="w-full text-center bg-[#252323] hover:bg-[#70798c] text-[#f5f1ed] px-4 py-2 rounded-lg transition-colors font-medium"
                 >
                   Sign Up
                 </button>

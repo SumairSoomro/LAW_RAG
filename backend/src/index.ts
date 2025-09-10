@@ -175,6 +175,7 @@ app.post('/query',
       const userId = authReq.user_id;
 
       console.log(`Processing query for user ${userId}: ${question}`);
+      
 
       // Step 1: Search for relevant chunks in user's namespace
       const searchResults = await hybridSearchService.searchRelevantChunks(

@@ -106,7 +106,8 @@ export const useAuthLogic = () => {
     
     const { error } = await supabase.auth.signOut();
     
-    if (error) {
+    // Don't throw error if session is missing - user is already logged out
+    if (error && error.message !== 'Auth session missing!') {
       setLoading(false);
       throw new Error(error.message);
     }

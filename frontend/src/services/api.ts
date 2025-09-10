@@ -7,11 +7,7 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY!
 );
 
-interface ApiResponse<T = any> {
-  data?: T;
-  error?: string;
-  details?: string;
-}
+
 
 class ApiClient {
   private async getAuthHeaders(): Promise<Record<string, string>> {
