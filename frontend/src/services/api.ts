@@ -1,12 +1,6 @@
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL!,
-  import.meta.env.VITE_SUPABASE_ANON_KEY!
-);
-
 
 
 class ApiClient {
@@ -101,4 +95,3 @@ class ApiClient {
 }
 
 export const apiClient = new ApiClient();
-export { supabase };

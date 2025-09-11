@@ -1,16 +1,7 @@
 import { useState, useEffect, createContext, useContext } from 'react';
-import { createClient, SupabaseClient, User as SupabaseUser } from '@supabase/supabase-js';
+import { User as SupabaseUser } from '@supabase/supabase-js';
 import { LoginCredentials, SignupCredentials, AuthContextType } from '../types/auth';
-
-// Initialize Supabase client
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
-}
-
-export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+import { supabase } from '../lib/supabase';
 
 // Auth Context
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -41,7 +32,7 @@ export const useAuthLogic = () => {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (_, session) => {
         setUser(session?.user ?? null);
         setLoading(false);
       }

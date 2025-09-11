@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const { user, signIn, signInWithGoogle, loading } = useAuth();
+  const { user, signIn, loading } = useAuth();
 
   // Redirect authenticated users to dashboard
   if (user && !loading) {
@@ -27,21 +27,11 @@ export const LoginPage: React.FC = () => {
     navigate('/signup');
   };
 
-  const handleGoogleSignIn = async () => {
-    try {
-      await signInWithGoogle();
-      // User will be redirected to Google, then back to dashboard
-    } catch (error) {
-      // Error handling is done in the LoginForm component
-      throw error;
-    }
-  };
 
   return (
     <LoginForm
       onSubmit={handleLogin}
       onSignUpClick={handleSignUpClick}
-      onGoogleSignIn={handleGoogleSignIn}
       isLoading={loading}
     />
   );
