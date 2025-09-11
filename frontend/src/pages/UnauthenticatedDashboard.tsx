@@ -1,13 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navbar } from '../components/layout/Navbar';
+import { Footer } from '../components/layout/Footer';
 import { Scale, FileText, MessageSquare, Shield } from 'lucide-react';
 
 export const UnauthenticatedDashboard: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f5f1ed] to-[#f5f1ed]/80">
+    <div className="min-h-screen bg-gradient-to-br from-[#f5f1ed] to-[#f5f1ed]/80 flex flex-col">
       <Navbar />
       
       <div className="flex-1 flex items-center justify-center p-4 pt-20">
@@ -120,6 +121,7 @@ export const UnauthenticatedDashboard: React.FC = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

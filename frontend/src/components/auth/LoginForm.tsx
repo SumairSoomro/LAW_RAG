@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, LogIn, Scale } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 interface LoginFormProps {
   onSubmit: (email: string, password: string, remember: boolean) => Promise<void>;
@@ -199,13 +199,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         <div className="text-center mt-8">
           <p className="text-xs text-[#a99985]">
             By signing in, you agree to our{' '}
-            <a href="#" className="text-[#70798c] hover:text-[#252323] transition-colors">
+            <Link to="/terms" className="text-[#70798c] hover:text-[#252323] transition-colors underline">
               Terms of Service
-            </a>{' '}
+            </Link>{' '}
             and{' '}
-            <a href="#" className="text-[#70798c] hover:text-[#252323] transition-colors">
+            <Link to="/privacy" className="text-[#70798c] hover:text-[#252323] transition-colors underline">
               Privacy Policy
-            </a>
+            </Link>
           </p>
         </div>
       </div>

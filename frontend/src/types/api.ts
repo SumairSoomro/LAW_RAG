@@ -50,3 +50,33 @@ export interface ApiError {
   error: string;
   details?: string;
 }
+
+// Chat Session Types
+export interface ChatSession {
+  id: string;
+  user_id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  session_id: string;
+  type: 'user' | 'ai';
+  content: string;
+  sources?: SourceReference[];
+  found_in_document?: boolean;
+  search_results?: number;
+  error?: boolean;
+  created_at: string;
+}
+
+export interface CreateSessionResponse {
+  session: ChatSession;
+}
+
+export interface SessionWithMessages {
+  session: ChatSession;
+  messages: ChatMessage[];
+}

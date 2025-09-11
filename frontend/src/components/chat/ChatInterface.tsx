@@ -1,9 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Paperclip, Send, Bot, User, FileText, Scale } from 'lucide-react';
+import { Paperclip, Send, User, FileText, Scale } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { DocumentService } from '../../services/documentService';
 import { ChatService } from '../../services/chatService';
-import { QueryResponse, SourceReference } from '../../types/api';
+import { ChatStorageService } from '../../services/chatStorageService';
+import { SourceReference, ChatSession, ChatMessage } from '../../types/api';
+
+// Convert ChatMessage to local Message format
+const convertChatMessage = (msg: ChatMessage): Message => ({
+  id: msg.id,
+  type: msg.type,
+  content: msg.content,
+  timestamp: new Date(msg.created_at),
+  sources: msg.sources,
+  foundInDocument: msg.found_in_document,
+  searchResults: msg.search_results,
+  error: msg.error
+});
 
 interface Message {
   id: string;
@@ -18,18 +31,15 @@ interface Message {
 
 export const ChatInterface: React.FC = () => {
   const { user } = useAuth();
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      type: 'ai',
-      content: "Welcome to Legal Probe! I'm your AI legal document assistant. Upload a PDF document using the paperclip icon below or drag and drop a PDF file anywhere on this screen, then ask me questions about its contents. I'll provide precise answers with document citations.",
-      timestamp: new Date()
-    }
-  ]);
+  const [currentSession, setCurrentSession] = useState<ChatSession | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoadingSession, setIsLoadingSession] = useState(false);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{ fileName: string; progress: number } | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [hasDocuments, setHasDocuments] = useState(false);
+  const [isLoadingDocuments, setIsLoadingDocuments] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -41,48 +51,193 @@ export const ChatInterface: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputMessage.trim() || isLoading) return;
+  // Load or create chat session when user logs in
+  useEffect(() => {
+    let isActive = true; // Prevent race conditions
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      type: 'user',
-      content: inputMessage.trim(),
-      timestamp: new Date()
+    const loadSession = async () => {
+      if (!user?.id) {
+        setMessages([]);
+        setCurrentSession(null);
+        return;
+      }
+
+      setIsLoadingSession(true);
+      try {
+        // Get or create current session
+        const session = await ChatStorageService.getCurrentSession(user.id);
+        if (!isActive) return; // Component unmounted or user changed
+        
+        setCurrentSession(session);
+
+        // Load existing messages
+        const chatMessages = await ChatStorageService.getSessionMessages(session.id);
+        if (!isActive) return; // Component unmounted or user changed
+        
+        if (chatMessages.length === 0) {
+          // If no messages, add welcome message and save it
+          const welcomeMessage = {
+            session_id: session.id,
+            type: 'ai' as const,
+            content: "Welcome to Legal Probe! I'm your AI legal document assistant. **Please upload a PDF document first** using the paperclip icon below or drag and drop a PDF file anywhere on this screen. Once uploaded, you can ask me questions about the document's contents and I'll provide precise answers with citations."
+          };
+          
+          const savedWelcome = await ChatStorageService.saveMessage(
+            session.id,
+            welcomeMessage.type,
+            welcomeMessage.content
+          );
+          
+          if (isActive) {
+            setMessages([convertChatMessage(savedWelcome)]);
+          }
+        } else {
+          if (isActive) {
+            setMessages(chatMessages.map(convertChatMessage));
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load chat session:', error);
+        if (isActive) {
+          // Fallback to local welcome message
+          setMessages([
+            {
+              id: '1',
+              type: 'ai',
+              content: "Welcome to Legal Probe! I'm your AI legal document assistant. **Please upload a PDF document first** using the paperclip icon below or drag and drop a PDF file anywhere on this screen. Once uploaded, you can ask me questions about the document's contents and I'll provide precise answers with citations.",
+              timestamp: new Date()
+            }
+          ]);
+        }
+      } finally {
+        if (isActive) {
+          setIsLoadingSession(false);
+        }
+      }
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    loadSession();
+
+    return () => {
+      isActive = false; // Cleanup
+    };
+  }, [user?.id]);
+
+  // Check for documents when user logs in
+  useEffect(() => {
+    const checkDocuments = async () => {
+      if (!user?.id) {
+        setHasDocuments(false);
+        return;
+      }
+
+      setIsLoadingDocuments(true);
+      try {
+        const response = await DocumentService.getDocuments();
+        setHasDocuments(response.documents.length > 0);
+      } catch (error) {
+        console.error('Failed to check documents:', error);
+        setHasDocuments(false);
+      } finally {
+        setIsLoadingDocuments(false);
+      }
+    };
+
+    checkDocuments();
+  }, [user?.id]);
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputMessage.trim() || isLoading || !currentSession || !user?.id) return;
+
+    // Check if documents are uploaded before allowing conversation
+    if (!hasDocuments) {
+      try {
+        const noDocumentMessage = "Please upload a PDF document first to start a conversation. I can only answer questions about documents you've uploaded.";
+        const savedMessage = await ChatStorageService.saveMessage(
+          currentSession.id,
+          'ai',
+          noDocumentMessage,
+          undefined,
+          undefined,
+          undefined,
+          false
+        );
+        setMessages(prev => [...prev, convertChatMessage(savedMessage)]);
+      } catch (error) {
+        console.error('Failed to save no-document message:', error);
+        // Fallback to local message
+        const noDocumentMessage: Message = {
+          id: Date.now().toString(),
+          type: 'ai',
+          content: "Please upload a PDF document first to start a conversation. I can only answer questions about documents you've uploaded.",
+          timestamp: new Date(),
+          error: false
+        };
+        setMessages(prev => [...prev, noDocumentMessage]);
+      }
+      return;
+    }
+
     const question = inputMessage.trim();
     setInputMessage('');
     setIsLoading(true);
 
     try {
+      // Save user message to database
+      const savedUserMessage = await ChatStorageService.saveMessage(
+        currentSession.id,
+        'user',
+        question
+      );
+      
+      // Add to local state immediately
+      setMessages(prev => [...prev, convertChatMessage(savedUserMessage)]);
+
+      // Send query to AI
       const response = await ChatService.sendQuery(question);
       
-      const aiResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        type: 'ai',
-        content: response.answer,
-        timestamp: new Date(),
-        sources: response.sources,
-        foundInDocument: response.foundInDocument,
-        searchResults: response.searchResults
-      };
+      // Save AI response to database
+      const savedAiMessage = await ChatStorageService.saveMessage(
+        currentSession.id,
+        'ai',
+        response.answer,
+        response.sources,
+        response.foundInDocument,
+        response.searchResults
+      );
       
-      setMessages(prev => [...prev, aiResponse]);
+      // Add to local state
+      setMessages(prev => [...prev, convertChatMessage(savedAiMessage)]);
     } catch (error) {
       console.error('Chat query failed:', error);
       
-      const errorResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        type: 'ai',
-        content: `Sorry, I encountered an error processing your question: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`,
-        timestamp: new Date(),
-        error: true
-      };
-      
-      setMessages(prev => [...prev, errorResponse]);
+      try {
+        // Save error message to database
+        const errorMessage = `Sorry, I encountered an error processing your question: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`;
+        const savedErrorMessage = await ChatStorageService.saveMessage(
+          currentSession.id,
+          'ai',
+          errorMessage,
+          undefined,
+          undefined,
+          undefined,
+          true
+        );
+        
+        setMessages(prev => [...prev, convertChatMessage(savedErrorMessage)]);
+      } catch (saveError) {
+        console.error('Failed to save error message:', saveError);
+        // Fallback to local error message
+        const errorResponse: Message = {
+          id: (Date.now() + 1).toString(),
+          type: 'ai',
+          content: `Sorry, I encountered an error processing your question: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`,
+          timestamp: new Date(),
+          error: true
+        };
+        setMessages(prev => [...prev, errorResponse]);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -117,35 +272,70 @@ export const ChatInterface: React.FC = () => {
         });
       }, 300);
 
-      const response = await DocumentService.uploadDocument(file);
+      await DocumentService.uploadDocument(file);
       
       clearInterval(progressInterval);
       setUploadProgress({ fileName: file.name, progress: 100 });
       
-      setTimeout(() => {
+      // Update document state after successful upload
+      setHasDocuments(true);
+      
+      setTimeout(async () => {
         setUploadProgress(null);
         
-        const uploadMessage: Message = {
-          id: Date.now().toString(),
-          type: 'ai',
-          content: `Great! I've successfully uploaded "${file.name}". You can now ask me questions about this document and I'll provide answers with specific citations.`,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, uploadMessage]);
+        if (currentSession) {
+          try {
+            const uploadMessage = `Great! I've successfully uploaded "${file.name}". You can now ask me questions about this document and I'll provide answers with specific citations.`;
+            const savedUploadMessage = await ChatStorageService.saveMessage(
+              currentSession.id,
+              'ai',
+              uploadMessage
+            );
+            setMessages(prev => [...prev, convertChatMessage(savedUploadMessage)]);
+          } catch (error) {
+            console.error('Failed to save upload message:', error);
+            // Fallback to local message
+            const uploadMessage: Message = {
+              id: Date.now().toString(),
+              type: 'ai',
+              content: `Great! I've successfully uploaded "${file.name}". You can now ask me questions about this document and I'll provide answers with specific citations.`,
+              timestamp: new Date()
+            };
+            setMessages(prev => [...prev, uploadMessage]);
+          }
+        }
       }, 1000);
       
     } catch (error) {
       console.error('Upload failed:', error);
       setUploadProgress(null);
       
-      const errorMessage: Message = {
-        id: Date.now().toString(),
-        type: 'ai',
-        content: `Failed to upload "${file.name}": ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`,
-        timestamp: new Date(),
-        error: true
-      };
-      setMessages(prev => [...prev, errorMessage]);
+      if (currentSession) {
+        try {
+          const errorMessage = `Failed to upload "${file.name}": ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`;
+          const savedErrorMessage = await ChatStorageService.saveMessage(
+            currentSession.id,
+            'ai',
+            errorMessage,
+            undefined,
+            undefined,
+            undefined,
+            true
+          );
+          setMessages(prev => [...prev, convertChatMessage(savedErrorMessage)]);
+        } catch (saveError) {
+          console.error('Failed to save upload error message:', saveError);
+          // Fallback to local error message
+          const errorMessage: Message = {
+            id: Date.now().toString(),
+            type: 'ai',
+            content: `Failed to upload "${file.name}": ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`,
+            timestamp: new Date(),
+            error: true
+          };
+          setMessages(prev => [...prev, errorMessage]);
+        }
+      }
     }
   };
 
@@ -235,6 +425,24 @@ export const ChatInterface: React.FC = () => {
       {/* Messages Area */}
       <div className="messages-area flex-1 overflow-y-auto p-4 sm:p-6 bg-gradient-to-br from-[#f5f1ed] to-[#f5f1ed]/80">
         <div className="max-w-4xl mx-auto space-y-6">
+          {/* Session Loading */}
+          {isLoadingSession && (
+            <div className="message ai flex items-start gap-3 mb-6">
+              <div className="w-8 h-8 bg-[#252323] rounded-lg flex items-center justify-center">
+                <Scale className="w-5 h-5 text-[#f5f1ed]" />
+              </div>
+              <div className="message-bubble ai bg-white border border-[#dad2bc] p-4 rounded-lg shadow-sm">
+                <div className="flex items-center gap-2 text-[#70798c]">
+                  <div className="flex gap-1">
+                    <div className="w-2 h-2 bg-[#70798c] rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-[#70798c] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-[#70798c] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
+                  <span className="text-sm">Loading your chat session...</span>
+                </div>
+              </div>
+            </div>
+          )}
           {messages.map((message) => (
             <div
               key={message.id}
@@ -363,14 +571,22 @@ export const ChatInterface: React.FC = () => {
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 className="message-input w-full bg-white border border-[#dad2bc] px-3 sm:px-4 py-2 sm:py-3 pr-12 sm:pr-16 rounded-lg text-[#252323] placeholder-[#70798c] focus:outline-none focus:border-[#70798c] focus:shadow-lg transition-all duration-200"
-                placeholder={user ? "Ask a question about your document..." : "Please sign in to start chatting..."}
-                disabled={!user || isLoading}
+                placeholder={
+                  !user 
+                    ? "Please sign in to start chatting..." 
+                    : !hasDocuments && !isLoadingDocuments
+                      ? "Upload a PDF document first to start chatting..."
+                      : isLoadingDocuments
+                        ? "Checking for documents..."
+                        : "Ask a question about your document..."
+                }
+                disabled={!user || isLoading || (!hasDocuments && !isLoadingDocuments)}
               />
 
               {/* Send Button - positioned inside input */}
               <button
                 type="submit"
-                disabled={!user || !inputMessage.trim() || isLoading}
+                disabled={!user || !inputMessage.trim() || isLoading || (!hasDocuments && !isLoadingDocuments)}
                 className="send-btn absolute right-2 top-1/2 -translate-y-1/2 overflow-hidden bg-black hover:bg-[#70798c] text-[#f5f1ed] p-2 sm:px-4 sm:py-2 rounded-md sm:rounded-lg font-medium transition-colors duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Send className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-150" />

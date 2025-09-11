@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, Scale, UserPlus, AtSign, Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface SignupFormProps {
   onSubmit: (username: string, email: string, password: string) => Promise<void>;
@@ -337,6 +338,20 @@ export const SignupForm: React.FC<SignupFormProps> = ({
             >
               Sign in
             </button>
+          </p>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center mt-8">
+          <p className="text-xs text-[#a99985]">
+            By creating an account, you agree to our{' '}
+            <Link to="/terms" className="text-[#70798c] hover:text-[#252323] transition-colors underline">
+              Terms of Service
+            </Link>{' '}
+            and{' '}
+            <Link to="/privacy" className="text-[#70798c] hover:text-[#252323] transition-colors underline">
+              Privacy Policy
+            </Link>
           </p>
         </div>
       </div>

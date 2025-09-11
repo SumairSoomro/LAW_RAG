@@ -7,6 +7,8 @@ import { DashboardPage } from './pages/DashboardPage';
 import { UnauthenticatedDashboard } from './pages/UnauthenticatedDashboard';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { ResetPasswordPage } from './pages/ResetPasswordPage';
+import { TermsOfServicePage } from './pages/TermsOfServicePage';
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 import { AuthProvider } from './components/auth/AuthProvider';
 
 // Create a client
@@ -30,6 +32,8 @@ function App() {
               <Route path="/signup" element={<SignupPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/terms" element={<TermsOfServicePage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/" element={<UnauthenticatedDashboard />} />
             </Routes>
