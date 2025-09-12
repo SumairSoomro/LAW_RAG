@@ -7,14 +7,17 @@ WORKDIR /app
 # Copy package.json and package-lock.json first for better caching
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install ALL dependencies (including devDependencies for build)
+RUN npm ci
 
 # Copy source code
 COPY . .
 
 # Build the TypeScript code
 RUN npm run build
+
+# Remove devDependencies and reinstall only production dependencies
+RUN npm ci --only=production && npm cache clean --force
 
 # Create uploads directory
 RUN mkdir -p uploads
