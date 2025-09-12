@@ -20,7 +20,22 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',')
+  : [
+      'http://localhost:3000',
+      'http://localhost:3001', 
+      'http://localhost:5173',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:5173'
+    ];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // Initialize services
@@ -81,15 +96,15 @@ app.post('/upload',
       const filePath = req.file.path;
       const originalFilename = req.file.originalname;
 
-      console.log(`Processing PDF upload for user ${userId}: ${originalFilename}`);
+
 
       // Step 1: Extract and chunk PDF  
       const chunks = await pdfExtractor.processPDF(filePath, originalFilename);
-      console.log(`Extracted ${chunks.length} chunks from PDF`);
+
 
       // Step 2: Generate embeddings for all chunks
       const embeddingBatch = await embeddingService.embedDocumentChunks(chunks);
-      console.log(`Generated embeddings for ${embeddingBatch.embeddings.length} chunks`);
+
 
       // Step 3: Prepare records for Pinecone storage
       const records = embeddingBatch.embeddings.map((embedding, index) => ({
@@ -113,7 +128,6 @@ app.post('/upload',
         records
       );
 
-      console.log(`Stored ${records.length} vectors in Pinecone namespace: ${userId}`);
 
       // Step 5: Store document metadata in Supabase
       const { data: documentRecord, error: dbError } = await authReq.supabase
@@ -154,8 +168,7 @@ app.post('/upload',
       }
       
       res.status(500).json({ 
-        error: 'Failed to process PDF upload',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Failed to process PDF upload'
       });
     }
   }
@@ -174,7 +187,6 @@ app.post('/query',
 
       const userId = authReq.user_id;
 
-      console.log(`Processing query for user ${userId}: ${question}`);
       
 
       // Step 1: Search for relevant chunks in user's namespace
@@ -184,7 +196,7 @@ app.post('/query',
         userId // Use user_id as namespace for isolation
       );
 
-      console.log(`Found ${searchResults.length} relevant chunks`);
+  
 
       if (searchResults.length === 0) {
         return res.json({
@@ -201,7 +213,6 @@ app.post('/query',
         searchResults
       );
 
-      console.log(`Generated answer: ${answerResponse.foundInDocument ? 'Found' : 'Not found'}`);
 
       // Step 3: Return structured response
       res.json({
@@ -213,8 +224,7 @@ app.post('/query',
     } catch (error) {
       console.error('Query error:', error);
       res.status(500).json({ 
-        error: 'Failed to process query',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Failed to process query'
       });
     }
   }
@@ -247,8 +257,7 @@ app.get('/documents',
     } catch (error) {
       console.error('Documents fetch error:', error);
       res.status(500).json({ 
-        error: 'Failed to fetch documents',
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Failed to fetch documents'
       });
     }
   }
@@ -258,8 +267,7 @@ app.get('/documents',
 app.use((error: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error('Unhandled error:', error);
   res.status(500).json({ 
-    error: 'Internal server error',
-    details: error.message 
+    error: 'Internal server error'
   });
 });
 

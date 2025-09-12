@@ -111,7 +111,7 @@ export class HybridSearchService {
       return finalChunks;
 
     } catch (error) {
-      throw new Error(`Failed to search relevant chunks: ${error}`);
+      throw new Error(`Failed to search relevant chunks: `);
     }
   }
 

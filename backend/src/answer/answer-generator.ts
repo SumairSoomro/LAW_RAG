@@ -81,7 +81,7 @@ export class AnswerGeneratorService {
       return this.parseAnswer(answerText, searchResults);
 
     } catch (error) {
-      throw new Error(`Failed to generate answer: ${error}`);
+      throw new Error(`Failed to generate answer`);
     }
   }
 

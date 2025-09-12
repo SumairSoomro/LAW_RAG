@@ -43,22 +43,4 @@ export class AuthMiddleware {
     }
   };
 
-  // Optional: Get user info for debugging/logging
-  getUserInfo = async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
-    const authReq = req as AuthenticatedRequest;
-    
-    try {
-      const { data: userProfile, error } = await authReq.supabase.auth.getUser();
-      
-      if (!error && userProfile.user) {
-        console.log(`Request from user: ${userProfile.user.email} (${authReq.user_id})`);
-      }
-      
-      next();
-    } catch (error) {
-      // Don't fail the request if we can't get user info
-      console.warn('Could not fetch user info:', error);
-      next();
-    }
-  };
 }

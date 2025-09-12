@@ -302,7 +302,7 @@ export class EmbeddingService {
 
       await index.namespace(namespace).upsert(vectors);
     } catch (error) {
-      throw new Error(`Failed to upsert to Pinecone: ${error}`);
+      throw new Error(`Failed to upsert to Pinecone:`);
     }
   }
 }
