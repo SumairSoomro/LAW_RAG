@@ -13,7 +13,9 @@ import { AnswerGeneratorService } from './answer/answer-generator';
 import { defaultConfig } from './config/config';
 
 // Load environment variables
-dotenv.config();
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config();
+}
 
 // Initialize Express app
 const app = express();
