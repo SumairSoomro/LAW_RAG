@@ -1,0 +1,10 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "cd backend && npm start"
+restartPolicyType = "never"
+
+[build.env]
+NIXPACKS_BUILD_CMD = "cd backend && npm ci && npm run build"
+\
