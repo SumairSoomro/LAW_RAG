@@ -1,9 +1,9 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "vite",
+  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/(.*)",
@@ -25,6 +25,10 @@
         {
           "key": "Referrer-Policy",
           "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "s-maxage=0"
         }
       ]
     }
