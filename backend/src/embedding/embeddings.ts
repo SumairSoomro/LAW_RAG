@@ -2,16 +2,19 @@ import OpenAI from 'openai';
 import { Pinecone } from '@pinecone-database/pinecone';
 import { DocumentChunk } from '../chunking/pdf-extractor';
 
+// Dense embedding from OpenAI (semantic similarity)
 export interface DenseEmbedding {
   values: number[];
   dimension: number;
 }
 
+// Sparse embedding from Pinecone (keyword/lexical matching)
 export interface SparseEmbedding {
   indices: number[];
   values: number[];
 }
 
+// Combined dense + sparse embeddings for hybrid search
 export interface HybridEmbedding {
   dense: DenseEmbedding;
   sparse: SparseEmbedding;
@@ -19,16 +22,19 @@ export interface HybridEmbedding {
   metadata: any;
 }
 
+// Batch processing result with token usage tracking
 export interface EmbeddingBatch {
   embeddings: HybridEmbedding[];
   totalTokens: number;
 }
 
+// Service for generating and managing embeddings using OpenAI and Pinecone
 export class EmbeddingService {
   private openai: OpenAI;
   public pinecone: Pinecone;
   private batchSize: number;
 
+  // Initialize the embedding service with API keys and batch size
   constructor(
     openaiApiKey: string,
     pineconeApiKey: string,
@@ -37,14 +43,15 @@ export class EmbeddingService {
     this.openai = new OpenAI({
       apiKey: openaiApiKey
     });
-    
+
     this.pinecone = new Pinecone({
       apiKey: pineconeApiKey
     });
-    
+
     this.batchSize = batchSize;
   }
 
+  // Generate dense embedding using OpenAI for semantic similarity
   async generateDenseEmbedding(text: string): Promise<DenseEmbedding> {
     try {
       const response = await this.openai.embeddings.create({
@@ -62,6 +69,7 @@ export class EmbeddingService {
     }
   }
 
+  // Generate multiple dense embeddings in a single API call for efficiency
   async generateDenseEmbeddingsBatch(texts: string[]): Promise<DenseEmbedding[]> {
     try {
       const response = await this.openai.embeddings.create({
@@ -79,6 +87,7 @@ export class EmbeddingService {
     }
   }
 
+  // Generate sparse embedding using Pinecone for keyword matching
   async generateSparseEmbedding(text: string): Promise<SparseEmbedding> {
     try {
       const response = await this.pinecone.inference.embed(
@@ -138,6 +147,7 @@ export class EmbeddingService {
     }
   }
 
+  // Generate multiple sparse embeddings in batch for efficiency
   async generateSparseEmbeddingsBatch(texts: string[]): Promise<SparseEmbedding[]> {
     try {
       const response = await this.pinecone.inference.embed(
@@ -179,6 +189,7 @@ export class EmbeddingService {
     }
   }
 
+  // Generate both dense and sparse embeddings for hybrid search
   async generateHybridEmbedding(
     text: string,
     metadata: any = {}
@@ -196,6 +207,7 @@ export class EmbeddingService {
     };
   }
 
+  // Generate hybrid embeddings for multiple texts in parallel
   async generateHybridEmbeddingsBatch(
     texts: string[],
     metadataArray: any[] = []
@@ -213,6 +225,7 @@ export class EmbeddingService {
     }));
   }
 
+  // Process document chunks into embeddings with batching and rate limiting
   async embedDocumentChunks(chunks: DocumentChunk[]): Promise<EmbeddingBatch> {
     const embeddings: HybridEmbedding[] = [];
     let totalTokens = 0;
@@ -242,18 +255,22 @@ export class EmbeddingService {
     };
   }
 
+  // Embed user query for similarity search
   async embedQuery(query: string): Promise<HybridEmbedding> {
     return this.generateHybridEmbedding(query);
   }
 
+  // Rough estimation of token count for cost tracking
   private estimateTokenCount(text: string): number {
     return Math.ceil(text.length / 4);
   }
 
+  // Simple delay function for rate limiting
   private delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  // Test embedding generation to validate API connectivity
   async validateEmbeddings(): Promise<boolean> {
     try {
       const testText = "This is a test embedding.";
@@ -270,6 +287,7 @@ export class EmbeddingService {
     }
   }
 
+  // Store vectors in Pinecone with proper formatting
   async upsertToPinecone(
     indexName: string,
     namespace: string,

@@ -77,6 +77,11 @@ Start the frontend development server:
 npm run dev
 ```
 
+To build for production:
+```bash
+npm run build
+```
+
 #### 4. Database Setup:
 
 **Supabase Setup:**
@@ -106,21 +111,88 @@ CREATE POLICY "Users can only access their own documents" ON documents
 **Pinecone Setup:**
 1. Create a new Pinecone index with:
    - Dimensions: 3072 (for OpenAI text-embedding-3-large)
-   - Metric: cosine
+   - Metric: dot
    - Enable sparse vectors
+   - Set up with embedding model integration for hybrid search
 
 #### 5. Visit the application:
 Open your browser and go to `http://localhost:5173`
+
+## Project Structure
+
+```
+Legal-RAG/
+├── frontend/                 # React TypeScript frontend
+│   ├── src/
+│   │   ├── components/      # React components
+│   │   │   ├── auth/        # Authentication components
+│   │   │   ├── chat/        # Chat interface
+│   │   │   ├── documents/   # Document management
+│   │   │   └── layout/      # Layout components
+│   │   ├── hooks/           # Custom React hooks
+│   │   ├── services/        # API services
+│   │   ├── types/           # TypeScript types
+│   │   └── utils/           # Utility functions
+│   ├── vercel.json          # Vercel deployment config
+│   └── package.json
+├── backend/                 # Node.js Express backend
+│   ├── src/
+│   │   ├── answer/          # Answer generation logic
+│   │   ├── auth/            # Authentication middleware
+│   │   ├── chunking/        # PDF processing and chunking
+│   │   ├── config/          # Configuration management
+│   │   ├── embedding/       # Embedding generation
+│   │   ├── query/           # Hybrid search implementation
+│   │   ├── storage/         # Pinecone storage management
+│   │   └── index.ts         # Main server file
+│   └── package.json
+└── README.MD
+
+```
+
+## Deployment
+
+### Frontend (Vercel)
+The frontend is configured for Vercel deployment with:
+- Automatic SPA routing via `vercel.json`
+- Security headers (XSS protection, content type sniffing prevention)
+- Optimized build process with Vite
+
+### Backend (Railway/Heroku)
+The backend can be deployed to Railway, Heroku, or similar platforms:
+- Production build: `npm run build`
+- Start command: `npm start`
+- Requires environment variables for OpenAI, Pinecone, and Supabase
+
+## Development Commands
+
+### Backend
+```bash
+npm run dev     # Development server with ts-node
+npm run build   # TypeScript compilation
+npm run start   # Production server
+npm run lint    # ESLint checking
+npm run test    # Jest testing
+```
+
+### Frontend
+```bash
+npm run dev     # Vite development server
+npm run build   # Production build
+npm run preview # Preview production build
+npm run lint    # ESLint checking
+```
 
 ## Technologies Used
 
 ### Frontend:
 - **React 18** with **TypeScript**
-- **Vite** for fast development and building  
+- **Vite** for fast development and building
 - **Tailwind CSS** for styling
-- **React Query** for API state management
+- **React Query (@tanstack/react-query)** for API state management
 - **React Router** for navigation
 - **Supabase** for authentication
+- **Lucide React** for icons
 
 ### Backend:
 - **Node.js** with **Express.js**
@@ -129,22 +201,25 @@ Open your browser and go to `http://localhost:5173`
 - **Pinecone** for vector storage and hybrid search
 - **Supabase** for authentication and document metadata
 - **Multer** for file upload handling
-- **PDF parsing** with custom extraction pipeline
+- **PDF parsing** with pdf-parse library
+- **Custom PDFExtractor** with adaptive chunking pipeline
 
 ### AI/ML Stack:
-- **OpenAI text-embedding-3-large** for dense embeddings
-- **Pinecone sparse vectors** for keyword matching
+- **OpenAI text-embedding-3-large** for dense embeddings (3072 dimensions)
+- **Pinecone sparse vectors** with pinecone-sparse-english-v0 for keyword matching
 - **GPT-4o-mini** for answer generation
 - **Custom hybrid search** combining semantic and lexical retrieval
-- **Adaptive chunking** based on document size and structure
+- **Adaptive chunking** based on document size and structure (~1000 tokens per chunk)
+- **GPT-tokenizer** for accurate token counting
 
 ## Architecture Highlights
 
 - **Hybrid RAG Pipeline:** Combines dense semantic search with sparse keyword matching for comprehensive legal document retrieval
-- **Adaptive Processing:** Document chunking automatically adjusts based on document size to optimize context preservation
-- **User Isolation:** Each user's documents are stored in separate Pinecone namespaces with Supabase RLS policies
-- **Strict Answer Validation:** AI responses are validated to ensure they only contain information from uploaded documents
+- **Adaptive Processing:** Document chunking automatically adjusts based on document size (~1000 tokens per chunk with ~200 token overlap)
+- **User Isolation:** Each user's documents are stored in separate Pinecone namespaces using Supabase user_id with RLS policies
+- **Strict Answer Validation:** AI responses are validated to ensure they only contain information from uploaded documents, responding "Not in the document" otherwise
 - **Professional Legal UI:** Interface designed specifically for legal professionals with proper citation formatting
+- **Deployment Ready:** Configured for Vercel deployment with proper SPA routing and security headers
 
 ## Demo
 

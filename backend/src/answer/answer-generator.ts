@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
 
+// Search result from vector database with metadata
 export interface SearchResult {
   id: string;
   score: number;
@@ -12,26 +13,30 @@ export interface SearchResult {
   };
 }
 
+// Structured response from answer generation
 export interface AnswerResponse {
-  answer: string;
-  sources: Array<{
+  answer: string;               // Generated answer or "Not in the document."
+  sources: Array<{              // Source citations for answer
     documentName: string;
   }>;
-  reasoning?: string;
-  foundInDocument: boolean;
+  reasoning?: string;           // Optional reasoning explanation
+  foundInDocument: boolean;     // Whether answer was found in context
 }
 
+// Service for generating strict RAG answers from retrieved context
 export class AnswerGeneratorService {
   private openai: OpenAI;
 
+  // Initialize answer generation service with OpenAI configuration
   constructor(openaiApiKey: string) {
     this.openai = new OpenAI({
       apiKey: openaiApiKey
     });
   }
 
+  // Generate answer using strict RAG approach - only from provided context
   async generateAnswer(
-    query: string, 
+    query: string,
     searchResults: SearchResult[]
   ): Promise<AnswerResponse> {
     try {
@@ -60,22 +65,6 @@ export class AnswerGeneratorService {
       
       
 
-      // GPT-5-nano configuration (no temperature parameter supported)
-
-
-      /*
-      const response = await this.openai.chat.completions.create({
-        model: 'gpt-5-nano',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        max_completion_tokens: 1000
-      });
-      */
-      
-    
-
       const answerText = response.choices[0]?.message?.content || "Not in the document.";
       
       return this.parseAnswer(answerText, searchResults);
@@ -85,6 +74,7 @@ export class AnswerGeneratorService {
     }
   }
 
+  // Format search results into structured context for the LLM
   private formatChunksForPrompt(searchResults: SearchResult[]): string {
     return searchResults
       .map((result, index) => {
@@ -94,6 +84,7 @@ export class AnswerGeneratorService {
       .join('\n');
   }
 
+  // Build system prompt that enforces strict adherence to provided context
   private buildSystemPrompt(): string {
     return `You are a strict legal assistant for law students and professionals. Your role is to provide accurate answers based ONLY on the provided context from legal documents.
 
@@ -112,10 +103,12 @@ export class AnswerGeneratorService {
     - Focus on the legal content, not the internal organization of the context`;
   }
 
+  // Build user prompt with context and query
   private buildUserPrompt(query: string, contextChunks: string): string {
     return `Context from legal documents: ${contextChunks} User question: ${query} Please answer the question using only the provided context. Remember to cite sources and explain your reasoning.`;
   }
 
+  // Parse LLM response and structure into AnswerResponse format
   private parseAnswer(answerText: string, searchResults: SearchResult[]): AnswerResponse {
     const foundInDocument = !answerText.toLowerCase().includes("not in the document");
     
@@ -137,42 +130,8 @@ export class AnswerGeneratorService {
     return response;
   }
 
+  // Extract source citations from search results (currently returns highest scoring document)
   private extractSources( searchResults: SearchResult[]): Array<{ documentName: string }> {
-    /*
-    const sources: Array<{ documentName: string }> = [];
-    const seenSources = new Set<string>();
-  
-
-    searchResults.forEach(result => {
-      const docName = result.metadata.documentName;
-      const sourceKey = `${docName}`;
-      
-      // Only look for document name
-      if (answerText.includes(docName) || answerText.includes(docName.replace('.pdf', ''))) {
-        if (!seenSources.has(sourceKey)) {
-          sources.push({
-            documentName: docName
-          });
-          seenSources.add(sourceKey);
-        }
-      }
-    });
-    return sources;
-    
-
-    if (searchResults.length === 0) {
-      return [];
-    }
-    const uniqueDocuments = new Set<string>();
-    
-    searchResults.forEach(result => {
-      uniqueDocuments.add(result.metadata.documentName);
-    });
-  
-    return Array.from(uniqueDocuments).map(docName => ({
-      documentName: docName
-    }));
-    */
     const highestScoringChunk = searchResults[0];
   
     return [{ documentName: highestScoringChunk.metadata.documentName }];
@@ -180,6 +139,7 @@ export class AnswerGeneratorService {
 
   }
 
+  // Validate answer response for quality and adherence to strict RAG principles
   async validateAnswer(
     answer: AnswerResponse,
     _originalQuery: string,

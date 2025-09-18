@@ -23,3 +23,7 @@ Thumbs.db
 # Testing
 coverage/
 .nyc_output
+
+# Test files
+test-*.js
+test-*.ts

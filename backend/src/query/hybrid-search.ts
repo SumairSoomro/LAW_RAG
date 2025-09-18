@@ -1,26 +1,31 @@
 import { EmbeddingService } from '../embedding/embeddings';
 import { SearchResult } from '../answer/answer-generator';
 
+// Configuration for hybrid search parameters
 export interface SearchConfig {
-  topK: number;
-  finalChunkCount: number;
-  similarityThreshold: number;
+  topK: number;               // Number of chunks to retrieve initially
+  finalChunkCount: number;    // Final number of chunks for answer generation
+  similarityThreshold: number; // Threshold for deduplication
   documentSizeHint?: 'small' | 'medium' | 'large';
 }
 
+// Document size-based configuration (not currently used)
 export interface DocumentSizeConfig {
   pageCount: number;
   initialRetrieval: number;
   finalSelection: number;
 }
 
+// Service for performing hybrid search combining dense and sparse embeddings
 export class HybridSearchService {
   private embeddingService: EmbeddingService;
 
+  // Initialize with embedding service for generating query embeddings
   constructor(embeddingService: EmbeddingService) {
     this.embeddingService = embeddingService;
   }
 
+  // Get search configuration based on document size (defaults to standard config)
   getAdaptiveConfig(estimatedPageCount?: number): SearchConfig {
     if (!estimatedPageCount) {
       // Default config for unknown document size
@@ -29,7 +34,7 @@ export class HybridSearchService {
         finalChunkCount: 6,
         similarityThreshold: 0.85
       };
-    }
+    } // Wasnt able to implement the below functionality so it just alwas defaults to default config
 
     // Adaptive configuration based on document size
     if (estimatedPageCount <= 20) {
@@ -56,6 +61,7 @@ export class HybridSearchService {
     }
   }
 
+  // Main search method: find relevant chunks using hybrid search
   async searchRelevantChunks(
     query: string,
     indexName: string,
@@ -115,6 +121,7 @@ export class HybridSearchService {
     }
   }
 
+  // Remove similar chunks to avoid redundant context
   private deduplicateChunks(chunks: SearchResult[], similarityThreshold: number): SearchResult[] {
     if (chunks.length <= 1) return chunks;
 
@@ -144,6 +151,7 @@ export class HybridSearchService {
     return uniqueChunks;
   }
 
+  // Calculate Jaccard similarity between two texts
   private calculateTextSimilarity(text1: string, text2: string): number {
     // Simple Jaccard similarity for text deduplication
     const words1 = new Set(text1.split(/\s+/));
@@ -155,6 +163,7 @@ export class HybridSearchService {
     return intersection.size / union.size;
   }
 
+  // Select diverse chunks prioritizing relevance and variety
   private selectDiverseChunks(chunks: SearchResult[], targetCount: number): SearchResult[] {
     if (chunks.length <= targetCount) {
       return chunks;
@@ -192,6 +201,7 @@ export class HybridSearchService {
     return selectedChunks;
   }
 
+  // Calculate diversity score combining relevance with document/page/section variety
   private calculateDiversityScore(candidate: SearchResult, selectedChunks: SearchResult[]): number {
     // Combine relevance score with diversity factors
     let diversityBonus = 0;
@@ -227,6 +237,7 @@ export class HybridSearchService {
     return candidate.score + diversityBonus;
   }
 
+  // Analyze search results for debugging and optimization
   async analyzeSearchResults(
     _query: string,
     results: SearchResult[]

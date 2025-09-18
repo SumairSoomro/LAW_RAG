@@ -106,7 +106,7 @@ export const useAuthLogic = () => {
     setUser(null);
     setLoading(false);
   };
-
+  //did not end up implementing signInWithGoogle
   const signInWithGoogle = async () => {
     setLoading(true);
     

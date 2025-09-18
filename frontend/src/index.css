@@ -1,31 +1,36 @@
+/* Google Fonts - Inter for UI text, JetBrains Mono for code */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* Tailwind CSS imports */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  /* Legal-themed color palette */
   :root {
-    --raisin-black: #252323;
-    --slate-gray: #70798c;
-    --isabelline: #f5f1ed;
-    --bone: #dad2bc;
-    --khaki: #a99985;
+    --raisin-black: #252323;  /* Dark text */
+    --slate-gray: #70798c;    /* Secondary text */
+    --isabelline: #f5f1ed;    /* Background cream */
+    --bone: #dad2bc;          /* Border/divider */
+    --khaki: #a99985;         /* Accent brown */
   }
-  
+
+  /* Base typography */
   body {
     font-family: 'Inter', sans-serif;
     background-color: var(--isabelline);
     color: var(--raisin-black);
     line-height: 1.6;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     color: var(--raisin-black);
   }
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar for webkit browsers */
 ::-webkit-scrollbar {
   width: 8px;
 }

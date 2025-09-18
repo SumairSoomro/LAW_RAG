@@ -396,10 +396,18 @@ export const ChatInterface: React.FC = () => {
     });
   };
 
-  const formatMessageContent = (content: string) => {
-    // Convert **text** to <strong>text</strong>
-    const boldFormatted = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    return boldFormatted;
+  const formatMessageContent = (content: string): React.ReactNode => {
+    // Split content by **text** patterns and create safe React elements
+    const parts = content.split(/(\*\*.*?\*\*)/g);
+
+    return parts.map((part, index) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        // Remove the ** markers and wrap in strong element
+        const boldText = part.slice(2, -2);
+        return <strong key={index}>{boldText}</strong>;
+      }
+      return part;
+    }).filter(part => part !== ''); // Remove empty strings
   };
 
   return (
@@ -465,10 +473,9 @@ export const ChatInterface: React.FC = () => {
                       ? 'bg-[#fff8f8] border border-[#fecaca] text-[#991b1b]'
                       : 'bg-white border border-[#dad2bc] text-[#252323]'
               } p-4 rounded-lg shadow-sm max-w-lg sm:max-w-2xl`}>
-                <p 
-                  className="whitespace-pre-wrap leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: formatMessageContent(message.content) }}
-                />
+                <p className="whitespace-pre-wrap leading-relaxed">
+                  {formatMessageContent(message.content)}
+                </p>
                 
                 {message.sources && message.sources.length > 0 && message.foundInDocument !== false ? (
                   <div className="source-info flex items-center gap-2 text-[#70798c] text-sm p-3 bg-[#f5f1ed] rounded border-l-4 border-[#70798c] mt-3">
